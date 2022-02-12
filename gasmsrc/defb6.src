@@ -2,9 +2,10 @@
 *UFO PROCESS START
 *PD=OBJECT,PD2=SHOT TIMER
 *
-UFOST   NEWP   UFOLP,STYPE
+UFOST   
+		NEWP   ( UFOLP,STYPE )
         LEAU   ,X
-        OBI    UFOP1,UFOKIL,$3333
+        OBI    ( UFOP1,UFOKIL,$3333 )
         STX    PD,U
         STU    OBJID,X
         LDD    SEED
@@ -43,7 +44,8 @@ UFO1    LDU    OPICT,X
         LDU    #UFOP1
         BSR    UFONV
 UFO2    STU    OPICT,X
-UFO3    NAP    6,UFOLP
+UFO3    
+		NAP    ( 6,UFOLP )
 *
 *UFO VELOCITY
 *
@@ -79,13 +81,14 @@ UFONV4  ADDA   #10
 UFONVX  RTS  
 *UFOKILL
 UFOKIL  DEC    UFOCNT
-        KILP   $0120,UFHSND
+        KILP   ( $0120,UFHSND )
         RTS  
 *
 *PROBE START
 *A=#
 PRBST   STA    XTEMP
-PRBS1   OBI    PRBP1,PRBKIL,$CCCC
+PRBS1   
+OBI    ( PRBP1,PRBKIL,$CCCC )
         JSR    RAND
         LDD    HSEED
         ANDA   #$3F
@@ -115,7 +118,8 @@ PRBSTX  RTS
 *
 *KILL PROBE
 *
-PRBKIL  KILO   $0210,PRHSND
+PRBKIL  
+KILO   ( $0210,PRHSND )
         LDA    #6
         JSR    RMAX
         LEAY   ,X
@@ -148,9 +152,9 @@ MMSLP   LDA    SWCNT
         CMPA   #20
         BHI    MMSWX            ;TOO MANY GUYS
         STA    SWCNT
-        NEWP   MSWM,STYPE
+        NEWP   ( MSWM,STYPE )
         LEAU   ,X
-        OBI    SWPIC1,MSWKIL,$2424
+        OBI    ( SWPIC1,MSWKIL,$2424 )
         LDD    OX16,Y
         STD    OX16,X
         LDD    OY16,Y
@@ -246,7 +250,8 @@ MSP     CMPD   #300*32          ;WAY PAST?
 MSWMF   DEC    PD4,U
         BNE    MSWL
         JSR    SWBMB            ;BOMB GUY
-MSWL    NAP    3,MSWLP
+MSWL    
+NAP    ( 3,MSWLP )
 *
 *SWARM BOMB
 *
@@ -256,7 +261,7 @@ SWBMB   PSHS   X
         EORA   OXV,X
         BMI    SWBX             ;NOT HEADED FOR PLAYER
         LEAY   ,X
-        SHL    FBOUT,BMBP1,BKIL
+        SHL    ( FBOUT,BMBP1,BKIL )
         BEQ    SWBX
         LDD    OXV,Y
         ASLB 
@@ -356,7 +361,8 @@ ASTX1   STU    OPICT,X
         SEX  
         ADDD   OX16,X
         STD    OX16,X
-ASTX    NAP    2,ASTRO
+ASTX
+NAP    ( 2,ASTRO )
 *
 *GET ALTITUDE
 *A=ALT,X=OBJ
@@ -405,7 +411,7 @@ AKIL1   LDU    OBJID,X
         LDD    #ACSND
         JSR    SNDLD
         PSHS   X
-        NEWP   P500,STYPE
+        NEWP   ( P500,STYPE )
         LEAY   ,X
         PULS   X
         STX    PD,Y             ;ASTRO OBJ-500 ROUTINE
@@ -427,11 +433,12 @@ ASTC1   CMPY   ,U++
         DECA 
         BNE    ASTC1
         JSR    ERROR
-ASTC2   CLRD 
+ASTC2   
+CLRD ()
         STD    -2,U
         DEC    ASTCNT
         BNE    ASTCX
-        NEWP   TERBLO,STYPE     ;BLOW UP TERRAIN
+        NEWP   ( TERBLO,STYPE)     ;BLOW UP TERRAIN
 ASTCX   PULS   X,U,PC,A
 *
 *TERRAIN BLOW PROCESS
@@ -496,14 +503,16 @@ TBL4    INC    PD,U
 *250 POINT PROCESS
 *PD=ASTRO PROCESS
 *
-P250    OBI    C25P1,NOKILL,$0000
+P250    
+OBI    ( C25P1,NOKILL,$0000 )
         LDD    #$0125
         BRA    P5000
 *
 *500 POINT PROCESS
 *X=EARTHLING OBJECT
 *
-P500    OBI    C5P1,NOKILL,$0000
+P500    
+OBI    ( C5P1,NOKILL,$0000 )
         LDD    #$0150
 P5000   JSR    SCORE
         LDY    PD,U
@@ -523,7 +532,7 @@ P501    SUBD   #$2000
 P502    STD    OY16,X
         STX    OPTR
         STX    PD,U             ;OBJECT INDEX
-        NAP    50,P503
+        NAP    ( 50,P503 )
 P503    LDX    PD,U
         JSR    KILOFF
         JMP    SUCIDE
@@ -532,7 +541,7 @@ P503    LDX    PD,U
 *X=OBJECT FIRING
 *
 SHOOT   PSHS   X
-        SHL    FBOUT,BMBP1,BKIL
+        SHL    ( FBOUT,BMBP1,BKIL )
         BEQ    SHOOTX           ;NONE LEFT
         LDB    SEED
         ANDB   #$1F
@@ -589,9 +598,10 @@ LSHTX   RTS
 *
 SCZST   PSHS   A
         STA    XTEMP
-SCZS0   NEWP   SCZ0,STYPE
+SCZS0   
+NEWP   ( SCZ0,STYPE )
         LEAU   ,X
-        OBI    SCZP1,SCZKIL,$CC33
+        OBI    ( SCZP1,SCZKIL,$CC33 )
         JSR    RAND
         LDD    BGL
         SUBD   #300*32
@@ -622,7 +632,7 @@ SCZS1   ADDD   XTEMP2           ;AVOID PLAYER
         PULS   A,PC
 *KILL SHITZO
 SCZKIL  DEC    SCZCNT
-        KILP   $0115,SCHSND
+        KILP   ( $0115,SCHSND )
         RTS  
 *
 *GET TARGET FROM LIST
@@ -654,9 +664,10 @@ LANDST  PSHS   A
 LNDST0  TST    ASTCNT           ;NO MORE TARGETS
         BNE    LNDST1
         JMP    SCZS0
-LNDST1  NEWP   LANDS0,STYPE
+LNDST1  
+NEWP   ( LANDS0,STYPE )
         LEAU   ,X
-        OBI    LNDP1,LKILL,$4433
+        OBI    ( LNDP1,LKILL,$4433 )
         JSR    RAND
         LDD    HSEED
         STD    OX16,X
@@ -733,9 +744,11 @@ LANDS2  STD    OYV,X            ;NEW Y VEL
         BLS    LANDS3
         LDU    #LNDP1
 LANDS3  STU    OPICT,X
-LANDS4  NAP    6,LANDS0
+LANDS4  
+NAP    ( 6,LANDS0 )
 *LETS GET HIM
-LANDG0  CLRD 
+LANDG0  
+CLRD ()
         INC    OTYP,X           ;DONT HYPER ME
         STD    OXV,X
         STD    OYV,X
@@ -773,7 +786,7 @@ LNDG2   LDA    OY16,Y
 LANDG2  ADDD   OY16,X
         STD    OY16,X
 LNDG20  JSR    LSHOT
-        NAP    1,LANDG
+        NAP    ( 1,LANDG )
 *ARE  WE  ON  HIM?
 LANDG3  LDD    OX16,X
         ADDD   #$0040
@@ -798,7 +811,7 @@ LANDF   LDU    CRPROC
         CMPA   #YMIN+8
         BLS    LANDFX           ;ALL DONE
         JSR    LSHOT
-        NAP    4,LANDF
+        NAP    ( 4,LANDF )
 *PULL HIM INSIDE
 LANDFX  LDD    #LSKSND
         JSR    SNDLD
@@ -810,7 +823,8 @@ LNDFXA  LDX    PD,U
         DEC    LNDCNT
         INC    LNDRES
         JMP    SUCIDE
-LNDFX0  CLRD 
+LNDFX0
+CLRD ()
         STD    OYV,X
         STD    OYV,Y
         LDA    OY16,Y
@@ -819,7 +833,7 @@ LNDFX0  CLRD
         DEC    OY16,Y
         LDA    #$12
         JSR    SNDOUT
-        NAP    1,LNDFXA
+        NAP    ( 1,LNDFXA )
 LNDFX1  LEAX   ,Y               ;KILL ASTRO
         LDD    OBJX,Y           ;CENTER EARTHLING BLOW
         ADDA   #1
@@ -865,7 +879,8 @@ SCZ1    SEX
         BRA    SCZ5
 SCZ2    CMPA   #-8
         BGT    SCZ4
-SCZ3    CLRD 
+SCZ3
+CLRD ()
         BRA    SCZ5
 SCZ4    LDD    SZYV
 SCZ5    STD    OYV,X
@@ -898,7 +913,8 @@ SCZ110  STB    OY16,X
         BEQ    SCZ12
         LDD    #SSHSND
         JSR    SNDLD
-SCZ12   NAP    3,SCZ0
+SCZ12   
+NAP    ( 3,SCZ0 )
 *
 *KILL KIDNAPPING LANDER
 *
@@ -908,7 +924,7 @@ LKIL1   LDU    OBJID,X          ;GOT A PASSENGER?
         LDD    #0
         LDD    #0               ;SPACE SAVER FO SOUND CALL
         PSHS   X
-        NEWP   AFALL,STYPE      ;START HIM FALLING
+        NEWP   ( AFALL,STYPE)      ;START HIM FALLING )
         LDU    PD2,U
         STU    PD,X
         LDD    #ASCSND
@@ -919,7 +935,7 @@ LKIL1   LDU    OBJID,X          ;GOT A PASSENGER?
         PULS   X
 *KILL LANDR
 LKILL   DEC    LNDCNT
-        KILP   $0115,LHSND
+        KILP   ( $0115,LHSND )
         RTS  
 *
 *ASTRONAUT FALL
@@ -941,7 +957,8 @@ AFALL0  JSR    GETALT
         STD    CENTMP           ;CENTER OF EXPLOSION
         JSR    ASTK1
         JMP    SUCIDE
-AFALL1  NAP    4,AFALL
+AFALL1  
+NAP    ( 4,AFALL )
 AFALL2  LDX    PD,U
         LDD    #0
         STD    OYV,X
@@ -954,7 +971,7 @@ AFALL2  LDX    PD,U
         JSR    GETALT
         CMPA   OY16,X
         BLO    ALAND0           ;WERE ON THE GROUND
-        NAP    1,AFALL2
+        NAP    ( 1,AFALL2 )
 ALAND   PSHS   X
         LDX    #P250
         BRA    ALND00
@@ -994,7 +1011,8 @@ TIEST1  STB    XTEMP+1          ;X VELOCITY
         STD    PD2,U
         STD    PD4,U
         STD    PD6,U
-TIEST2  OBI    TIEP1,TIEKIL,$8888
+TIEST2  
+OBI    ( TIEP1,TIEKIL,$8888 )
         LDB    XTEMP+1
         SEX  
         STD    OXV,X
@@ -1113,11 +1131,13 @@ TIE31   LDA    LSEED            ;BOMB?
         ANDA   #$7
         BNE    TIEX             ;NO
         BSR    BOMBST
-TIEX    NAP    1,TIE
+TIEX    
+NAP    ( 1,TIE )
 *
 *TIE KILL
 *
-TIEKIL  KILO   $0125,TIHSND
+TIEKIL  
+KILO   ( $0125,TIHSND )
         DEC    TIECNT
         LDU    OBJID,X
         LEAY   PD,U
@@ -1136,7 +1156,7 @@ TIEKX   RTS
 BOMBST  LDA    BMBCNT
         CMPA   #10
         BHS    BMBSTX
-        SHL    BMBOUT,BMBP1,BKIL
+        SHL    ( BMBOUT,BMBP1,BKIL )
         BEQ    BMBSTX
         LDB    HSEED
         SEX  
@@ -1194,7 +1214,7 @@ EXST    PSHS   X,U,D,Y
 *PD =TCTAB INDEX
 TIECOL  LDX    #TCTAB
 TIECL1  STX    PD,U
-        NAP    6,TIECL
+        NAP    ( 6,TIECL )
 TIECL   LDX    PD,U
         LDD    ,X++
         STD    PCRAM+$D
@@ -1213,7 +1233,7 @@ TCTAB   FCB    $81,$81,$2F
 CBOMB   LDA    #$FF
         STA    PCRAM+$A
         CLR    PCRAM+$C
-        NAP    3,CBMB1
+        NAP    ( 3,CBMB1 )
 CBMB1   LDA    SEED
         ANDA   #$1F
         LDX    #COLTAB
@@ -1225,7 +1245,7 @@ CBMB1   LDA    SEED
         BNE    CBMB2
         LDX    #BMBD20
 CBMB2   STX    BAX
-        NAP    6,CBOMB
+        NAP    ( 6,CBOMB )
 *
 *FLASH PLAYER-UP PROCESS
 *
@@ -1238,10 +1258,11 @@ FLPUP   LDA    SCRFLG           ;SCORED?
         LDX    #P2DISP
 FLP1    LDD    #256*24+8
         JSR    BLKCLR
-        NAP    8,FLP2
+        NAP    ( 8,FLP2 )
 FLP2    JSR    SCRTRN
-        NAP    12,FLPUP
-FLPX    DIE  
+        NAP    ( 12,FLPUP )
+FLPX    
+DIE  ()
 *
 *SLEEP IN ROMOTE BLOCK
 *PD+6,7=WAKEUP ADDR

@@ -1,0 +1,138 @@
+struct player_data {
+	PSCOR    : qword,
+	PRPLA    : byte[3],
+	PLAS     : byte,
+	PWAV     : byte,
+	PSBC     : byte,
+	PTARG    : byte,
+	PENEMY   : byte[50],
+}
+
+struct smap {
+	SX : byte,
+	SY : byte,
+	SCOL : byte[2],
+	_SPARE : byte[(16-1) * 4 ]
+}
+
+; NAP     MACRO  \1,\2
+;         LDA    #\1              ;TIME
+;         LDX    #\2              ;WAKEUP ADDR
+;         JMP    SLEEP
+;         ENDM 
+
+macro NAP(time,wakeup) {
+        LDA    #|time|              ;TIME
+        LDX    #|wakeup|              ;WAKEUP ADDR
+        JMP    SLEEP
+}
+
+; NAP     MACRO  \1,\2
+;         LDA    #\1              ;TIME
+;         LDX    #\2              ;WAKEUP ADDR
+;         JMP    SLEEP
+;         ENDM 
+
+*
+*M A C R O S
+*
+; SHL     MACRO  \1,\2,\3
+;         JSR    GETSHL
+;         FDB    \1,\2,\3
+;         ENDM 
+macro SHL     (a,b,c) {
+        JSR    GETSHL
+        FDB    |a|, |b|, |c|
+        }
+
+; KILP    MACRO  \1,\2
+;         JSR    KILPOS
+;         FDB    \1
+;         FDB    \2
+;         ENDM 
+macro KILP (a,b) {
+        JSR    KILPOS
+        FDB    |a|
+        FDB    |b|
+        }
+
+; KILO    MACRO  \1,\2
+;         JSR    KILOS
+;         FDB    \1
+;         FDB    \2
+;         ENDM 
+macro KILO(a,b) {
+        JSR    KILOS
+        FDB    |a|, |b|
+        }
+
+; *INIT OBJECT
+; OBI     MACRO  \1,\2,\3
+;         JSR    OBINIT
+;         FDB    \1,\2,\3
+;         ENDM 
+
+macro OBI(a,b,c) {
+        JSR    OBINIT
+        FDB    |a|,|b|,|c|
+}
+
+; CLRD    MACRO
+;         CLRA 
+;         CLRB 
+;         ENDM 
+
+macro CLRD() {
+	CLRA 
+	CLRB 
+}
+
+; DIE     MACRO
+;         JMP    SUCIDE           ;DIE!
+;         ENDM 
+macro 	DIE()  {
+        JMP    SUCIDE           ;DIE!
+        }
+
+
+; *
+; NAP     MACRO  \1,\2
+;         LDA    #\1              ;TIME
+;         LDX    #\2              ;WAKEUP ADDR
+;         JMP    SLEEP
+;         ENDM 
+
+; *
+; *MAKE A NEW PROCESS
+; *
+; NEWP    MACRO  \1,\2
+;         LDX    #\1              ;ADDR
+;         LDA    #\2              ;TYPE
+;         JSR    MKPROC
+;         ENDM 
+
+macro NEWP(addr, type) {
+        LDX    #|addr|            ;ADDR
+        LDA    #|type|             ;TYPE
+        JSR    MKPROC
+}
+
+; *
+; *OBJECT OFF MACRO
+; *
+; OBJOFF  MACRO  \1
+;         IFEQ   NARG-1
+;         LDY    #\1
+;         ENDC 
+;         JSR    COFF
+;         ENDM 
+; *
+; *OBJECT  ON MACRO
+; *
+; OBJON   MACRO  \1
+;         IFEQ   NARG-1
+;         LDY    #\1
+;         ENDC 
+;         JSR    CWRIT
+;         ENDM 
+;         PAGE 

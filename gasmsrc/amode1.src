@@ -16,31 +16,57 @@ HALLDV  EQU    INITSSV+2
 HALENV  EQU    HALLDV+2
 
 *  STILOB PICT,X,Y  CREATES AN OBJECT WITH NO VELOCITY AT X,Y
-STILOB  MACRO  \1,\2,\3
+; STILOB  MACRO  \1,\2,\3
+;         JSR    GETOB            ;GET AN OBJECT
+;         LDD    #0               ;VELOCITY
+;         STD    OXV,X
+;         STD    OYV,X
+;         LDD    #\2              ;X
+;         STD    OX16,X
+;         LDD    #\3
+;         STD    OY16,X
+;         LDD    #\1              ;PICTURE
+;         STD    OPICT,X
+;         STX    OPTR             ;AND APPEND TO LIST
+;         ENDM 
+
+macro STILOB(a,b,c) {
         JSR    GETOB            ;GET AN OBJECT
         LDD    #0               ;VELOCITY
         STD    OXV,X
         STD    OYV,X
-        LDD    #\2              ;X
+        LDD    #|b|              ;X
         STD    OX16,X
-        LDD    #\3
+        LDD    #|c|
         STD    OY16,X
-        LDD    #\1              ;PICTURE
+        LDD    #|a|              ;PICTURE
         STD    OPICT,X
         STX    OPTR             ;AND APPEND TO LIST
-        ENDM 
+} 
 
-NAPP    MACRO  \1,\2
-        LDA    #\1
-        LDX    #\2
+; NAPP    MACRO  \1,\2
+;         LDA    #\1
+;         LDX    #\2
+;         JMP    SLEEPP
+;         ENDM 
+
+macro NAPP (a,b) {
+        LDA    #|a|
+        LDX    #|b|
         JMP    SLEEPP
-        ENDM 
+        }
+
 * BSO BONER DOES NOT ALLOW MACRO AND SYMBOL FOR LJSR SO CHANGED TO MLJSR
-MLJSR   MACRO  \1,\2
+; MLJSR   MACRO  \1,\2
+;         JSR    LJSRV
+;         FDB    \2
+;         FCB    \1
+;         ENDM 
+macro MLJSR   (a,b) {
         JSR    LJSRV
-        FDB    \2
-        FCB    \1
-        ENDM 
+        FDB    |a|
+        FCB    |b|
+}
 
 *SAM EQUATES
 BLKLEN  EQU    14
@@ -129,7 +155,7 @@ HALLOF  JSR    GNCIDE           ;KILL ALL PROCESSES
         STA    ENTFLG           ;CLEAR ENTRY FLAG
         LDA    PWRFLG           ;CHECK FOR POWER ON INITIALIZATION
         LBEQ   AMODES           ;YES?, SKIP TO WILLI PAGE
-        NEWP   CREDS,AMTYPE     ;TURN ON CREDITS
+        NEWP   ( CREDS,AMTYPE )     ;TURN ON CREDITS
         LDY    #P1SCR           ;START WITH PLAYER 1
         LDA    #1
 HALL1   STA    PNUMB            ;PLAYER NUMBER
@@ -168,10 +194,10 @@ HALL3   DECB                    ;DELAY
         ASLA 
         LEAU   A,U
         LDX    #$3E38           ;SCREEN ADDRESS
-        MLJSR  2,WTEXTB         ;WRITE TO SCREEN
+        MLJSR  ( 2,WTEXTB )         ;WRITE TO SCREEN
         LDU    #HOFV            ;HALL OF FAME ENTRY INSTRUCTIONS
         LDX    #$1458           ;SCREEN ADDRESS
-        MLJSR  2,WTEXTB         ;WRITE TO SCREEN
+        MLJSR  ( 2,WTEXTB )         ;WRITE TO SCREEN
         LDD    #$412F           ;INITIALIZE INTIALS
         STD    INITS
         LDA    #$40
@@ -180,16 +206,17 @@ HALL3   DECB                    ;DELAY
         JSR    HOFIN            ;DISPLAY INITIALS
         LDA    #40              ;FIRST INITIAL STALL TIME
         STA    STALT
-        NEWP   HOFST,AMTYPE     ;TURN ON STALL TIMER
-        NEWP   HOFBL,AMTYPE     ;TURN ON BLINK
-        NEWP   HOFUD,AMTYPE     ;TURN ON UP DOWN STICK
+        NEWP   ( HOFST,AMTYPE )     ;TURN ON STALL TIMER
+        NEWP   ( HOFBL,AMTYPE )     ;TURN ON BLINK
+        NEWP   ( HOFUD,AMTYPE )     ;TURN ON UP DOWN STICK
         CLR    INITN            ;ZERO INITIALS COUNTER
         JSR    HOFUL            ;UNDERLINE INITIALS
 *FIRE SWITCH
 HALL3A  CLRA 
         STA    FIRCNT           ;ZERO SWITCH OPEN COUNTER
         STA    FIRFLG           ;CLEAR SWITCH OPEN FLAG
-HALL3B  NAPP   1,HALL4          ;SLEEP 1
+HALL3B  
+NAPP   ( 1,HALL4 )          ;SLEEP 1
 HALL4   LDA    PIA21            ;CHECK FIRE SWITCH
         BITA   #1
         BNE    HALL5            ;CLOSED?
@@ -228,7 +255,7 @@ HALL12  LDY    #P2SCR          ;PLAYER TWO
         LBNE   HALL1
         TST    ENTFLG           ;CHECK IF ENTRY WAS MADE
         BNE    HALL13
-        NAPP   $FF,HALL13       ;NO ENTRY, SLEEP 4 SECS
+        NAPP   ( $FF,HALL13 )       ;NO ENTRY, SLEEP 4 SECS
 HALL13  JMP    HALDIS           ;ATTRACT MODE NOW
 *
 *COMPARE NIBBLES AT X BLOCK 0 WITH SCORE AT Y
@@ -247,7 +274,7 @@ HOFIN   LDX    #$46AC           ;TOP LEFT OF INITIALS
         LDD    #$1408           ;SIZE OF INITIALS
         JSR    BLKCLR           ;ERASE BLOCK
         LDU    #INITSSV          ;INITIALS TEXT VECTOR
-        MLJSR  2,WTEXTB         ;WRITE TO SCREEN
+        MLJSR  ( 2,WTEXTB )         ;WRITE TO SCREEN
         RTS  
 *
 *HALL OF FAME - UNDERLINE INITIALS
@@ -310,7 +337,7 @@ HOFMD2  PULS   X,PC             ;RESTORE STACK, RETURN
 *HALL OF FAME STALL TIMER
 *
 HOFST   DEC    STALT            ;COUNT DOWN STALL TIMER
-        NAPP   60,HOFST         ;SLEEP 1 SECOND
+        NAPP   ( 60,HOFST )         ;SLEEP 1 SECOND
 *
 *HALL OF FAME COLOR BLINK
 *
@@ -320,7 +347,7 @@ HOFBL   LDA    PCRAM+$D         ;GET BLINKING COLOR
         BRA    HOFBL2
 HOFBL1  CLRA                     ;TURN OFF
 HOFBL2  STA    PCRAM+$D         ;CHANGE COLOR
-        NAPP   15,HOFBL         ;BLINK PERIOD
+        NAPP   ( 15,HOFBL )         ;BLINK PERIOD
 *
 *HALL OF FAME UP DOWN STICK HANDLER
 *
@@ -361,7 +388,8 @@ HOFUD7  STA    ,X               ;SAVE NEW INITIAL
         ADDA   #5               ;TOP SPEED LIMIT
         STA    UDDEL            ;SAVE NEW DELAY
         STA    UDCNT            ;INITIALIZE COUNTER
-HOFUD8  NAPP   1,HOFUD1         ;SLEEP 1
+HOFUD8  
+NAPP   ( 1,HOFUD1 )         ;SLEEP 1
 *NEW DIRECTION
 HOFUD9  STA    INIDIR           ;NEW DIRECTION
         LDA    #55              ;PREINITIAL DELAY
@@ -382,11 +410,11 @@ HALDIS  CLR    HSRFLG           ;CLEAR HIGH SCORE RESET FLAG
         JSR    SCRCLR           ;CLEAR ACTIVE SCREEN
         JSR    P1SW             ;ALWAYS UPRIGHT
         CLR    PCRAM+1          ;BLACK LETTERS
-        NEWP   CREDS,AMTYPE     ;TURN ON CREDITS
+        NEWP   ( CREDS,AMTYPE )     ;TURN ON CREDITS
         JSR    SCORES           ;DISPLAY SCORES
         LDU    #HALLDV          ;GET HEADINGS MESSAGE VECTOR
         LDX    #$3854           ;SCREEN ADDRESS
-        MLJSR  2,WTEXTB         ;WRITE TO SCREEN
+        MLJSR  ( 2,WTEXTB )         ;WRITE TO SCREEN
 *UNDERLINE HEADINGS
         LDU    #$1111           ;UNDERLINE COLOR
         LDX    #$1E7B           ;LEFT ADDERSS
@@ -422,7 +450,7 @@ HALD2   DECA
         STD    2,Y
         LDD    #$3038           ;SCREEN ADDRESS
         JSR    CWRIT            ;WRITE TO SCREEN
-        NEWP   COLR,AMTYPE      ;LASER COLOR LETTERS
+        NEWP   ( COLR,AMTYPE )      ;LASER COLOR LETTERS
         LDA    #60              ;DELAY TIMER
         STA    STALT
 HALD3   TST    ICREDF           ;CHECK FOR INCREASE IN CREDITS
@@ -431,7 +459,7 @@ HALD3   TST    ICREDF           ;CHECK FOR INCREASE IN CREDITS
         LBNE   HALDIS           ;YES?, HALL OF FAME AGAIN
         DEC    STALT            ;TIME OUT?
         BEQ    HALD4
-        NAPP   10,HALD3         ;NOPE, NOT YET
+        NAPP   ( 10,HALD3 )         ;NOPE, NOT YET
 HALD4   BRA    LEDRET           ;ON TO INSTUCTIONS
 *
 *HALL OF FAME DISPLAY ONE TABLE  U=DATA LINE MESSAGE VECTOR
@@ -461,7 +489,7 @@ HALDT4  STB    ,Y+              ;STORE IN PSEUDO WORD
         STA    INITDS+2         ;STORE IN PSEUDO WORD
         STX    XTEMPS           ;SAVE DATA POINTER
         LDX    SPOINT           ;GET SCREEN ADDRESS
-        MLJSR  2,WTEXTB         ;WRITE DATA LINE TO SCREEN
+        MLJSR  ( 2,WTEXTB )         ;WRITE DATA LINE TO SCREEN
         LEAX   10,X             ;MOVE SCREEN POINTER ONE LINE DOWN
         STX    SPOINT           ;SAVE SCREEN POINTER
         INC    PNUMB            ;ADVANCE RANK NUMBER
@@ -479,20 +507,20 @@ LEDRET  JSR    GNCIDE           ;KILL ANY EXCESS
         LDA    #$D9             ;SET STATUS
         STA    STATUS
         JSR    SCORES
-        NEWP   CREDS,AMTYPE     ;TURN ON CREDITS
+        NEWP   ( CREDS,AMTYPE )     ;TURN ON CREDITS
         JSR    BORDER
         LDX    #TEXTAB+2
         STX    TEXPTR
-        NEWP   COLR,AMTYPE     
-        NEWP   CBOMB,AMTYPE   
-        NEWP   TIECOL,AMTYPE 
-        NEWP   SCPROC,AMTYPE
-        NEWP   TEXTP,AMTYPE
-        STILOB ASTP1,XMAN,YMAN  ;ASTRONAUT
+        NEWP   ( COLR,AMTYPE )     
+        NEWP   ( CBOMB,AMTYPE )   
+        NEWP   ( TIECOL,AMTYPE ) 
+        NEWP   ( SCPROC,AMTYPE )
+        NEWP   ( TEXTP,AMTYPE )
+        STILOB ( ASTP1,XMAN,YMAN )  ;ASTRONAUT
         LDD    #$6666
         STD    OBJCOL,X
         STX    MANPTR           ;SAVE HIS OBJECT
-        STILOB PLAPIC,XSHIP,YSHIP ;PLAYER
+        STILOB ( PLAPIC,XSHIP,YSHIP ) ;PLAYER
         LDD    #$0
         STD    OBJCOL,X         ;LEAVE SHIP
         STX    SHIPTR           ;SAVE IT
@@ -511,16 +539,17 @@ LEDRET  JSR    GNCIDE           ;KILL ANY EXCESS
         STD    OBJCOL,X         ;BLIP
         JSR    APVCT            ;MAKE HIM MATERIALIZE
         STX    ENEMYP
-        NAPP   $E6,AMODE1       ;WAIT FOR HIM TO REACH MAN
+        NAPP   ( $E6,AMODE1 )       ;WAIT FOR HIM TO REACH MAN
 AMODE1  LDD    #$FF50           ;GOING UP!
         LDX    ENEMYP           ;GET THE GUYS BLOCK
         STD    OYV,X
         LDX    MANPTR
         STD    OYV,X            ;HIS TOO.
-        NAPP   $A0,AMODE2       ;WAIT FOR HIM TO BE IN LINE WITH THE LASER.
-AMODE2  NEWP   LASRS,AMTYPE
+        NAPP   ( $A0,AMODE2 )       ;WAIT FOR HIM TO BE IN LINE WITH THE LASER.
+AMODE2  
+NEWP   ( LASRS,AMTYPE )
         STX    LASPRC           ;SAVE NEW PROCESS ID.
-        NAPP   $15,AMODE3
+        NAPP   ( $15,AMODE3 )
 
 SCINIT  LDA    #$FF
         STA    STATUS
@@ -529,7 +558,7 @@ SCINIT  LDA    #$FF
         LDD    #0
         STD    BGL
         STD    BGLX
-        MLJSR  0,BGI
+        MLJSR  ( 0,BGI )
         JSR    CRINIT
         LDA    #$DB             ;THIS IS THE STATUS
         STA    STATUS           ;WHY???  WHO KNOWS!
@@ -566,12 +595,13 @@ AMODE4  LDX    MANPTR           ;GET THE MANS PTR
         STD    OYV,X            ;AND PUT IT BACK.
         DEC    MANFRF           ;ONE LESS FRAME
         BEQ    AMODE5
-        NAPP   2,AMODE4
+        NAPP   ( 2,AMODE4 )
 *
 *  INTERSECTION OF SHIP AND MAN
 *
 
-AMODE5  STILOB  C5P1,$1DFF,$9000 ;500 PTS.
+AMODE5  
+STILOB  ( C5P1,$1DFF,$9000 ) ;500 PTS.
         LDD    #$0
         STD    OBJCOL,X
         STX    P500OB
@@ -586,7 +616,7 @@ AMODE5  STILOB  C5P1,$1DFF,$9000 ;500 PTS.
         LDD    #$A2E0
         STD    OY16,X
         STU    OYV,X
-        NAPP   $50,AMODE7
+        NAPP   ( $50,AMODE7 )
 AMODE7  LDX    P500OB
         LDD    #$E000
         STD    OY16,X           ;MOVE THE 500 DOWN
@@ -602,7 +632,7 @@ AMODE7  LDX    P500OB
         STD    OXV,X
         LDD    #$FE80
         STD    OYV,X            ;MOVE SHIP BACK
-        NAPP   $60,AMODE8
+        NAPP   ( $60,AMODE8 )
 AMODE8  LDX    SHIPTR
         LDD    #PLAPIC
         STD    OPICT,X
@@ -635,10 +665,11 @@ AMOD12  JSR    GETOB            ;OBJECT PLEASE*****************BSO BONER***
         JSR    APVCT            ;MAKE IT APPEAR
         STU    OTABPT           ;SAVE OUR TABLE POINTER
         STX    ENEMYP           ;SAVE THE GUYS POINTER.
-        NAPP   $5F,AMOD10       ;WAIT FOR IN LINE WITH LASER
-AMOD10  NEWP   LASRS,AMTYPE
+        NAPP   ( $5F,AMOD10 )       ;WAIT FOR IN LINE WITH LASER
+AMOD10  
+NEWP   ( LASRS,AMTYPE )
         STX    LASPRC           ;SAVE THE PROCESS POINTER.
-        NAPP   $17,AMOD11
+        NAPP   ( $17,AMOD11 )
 AMOD11  JSR    KLASUB           ;TRASH THE LASER
         LDX    ENEMYP           ;GET THE GUY
         JSR    KILLOB           ;FREE IT
@@ -654,16 +685,17 @@ AMOD11  JSR    KLASUB           ;TRASH THE LASER
         STD    OXV,X            ;NO MOVEMENT PLEASE
         JSR    APVCT            ;APPEARANCE HERE PLEASE.
         STU    OTABPT
-        NAPP   $20,BMODE2
+        NAPP   ( $20,BMODE2 )
 BMODE2  LDX    TEXPTR
         LEAX   2,X
         STX    TEXPTR           ;PUT THE TEXT DOWN
-        NAPP   $20,BMODE3
+        NAPP   ( $20,BMODE3 )
 BMODE3  LDU    OTABPT
         CMPU   #OTABND          ;END
         LBNE   AMOD12
-        NAPP   $FF,AMOD13
-AMOD13  NAPP   $FF,AMODES       ;DO IT AGAIN!
+        NAPP   ( $FF,AMOD13 )
+AMOD13  
+NAPP   ( $FF,AMODES )       ;DO IT AGAIN!
 
 LASRS   LDX    SHIPTR           ;GET SHIP
         LDX    OBJX,X           ;GET SCREEN COORDS
@@ -698,14 +730,14 @@ LAS3    LDB    ,Y+
 LAS4    CLR    ,X
         LEAX   $100,X
         STX    LSTATE
-        NAPP   1,LAS0
+        NAPP   ( 1,LAS0 )
 
 TEXTP   LDY    #TEXTAB          ;START OF TABLE****************BSO BONER**********
 TEXTP1  FCB    $EE,$A9,$00,$0E  ;(LDU TENT,Y) GET MESSAGE VECTOR**********
         LDX    ,Y++             ;GET ADDRESS*******************BSO BONER**********
-        MLJSR  2,WTEXTB         ;WRITE THIS ONE.
+        MLJSR  ( 2,WTEXTB )         ;WRITE THIS ONE.
         STY    TEXTMP           ;SAVE PTR
-        NAPP   6,TEXTP2
+        NAPP   ( 6,TEXTP2 )
 TEXTP2  LDY    TEXTMP           ;GET IT BACK
         CMPY   TEXPTR           ;ENOUGH???
         BNE    TEXTP1           ;NOPE...DO ANOTHER
@@ -722,8 +754,8 @@ AMODES  JSR    GNCIDE
         CLR    MESPT
         LDD    #$FFFF
         STD    NUMBER
-        NEWP   COLR,AMTYPE 
-        NEWP   TIECOL,AMTYPE
+        NEWP   ( COLR,AMTYPE ) 
+        NEWP   ( TIECOL,AMTYPE )
         LDA    #$3F
         STA    PCRAM+$C
 
@@ -790,24 +822,26 @@ LOGO10  STX    CUREND           ;SAVE END OF CURSER
         BNE    LOGO1S           ;NOPE
         LDA    #10              ;NOPE MAKE FAST
         STA    LGOFLG
-        NEWP   PRES,AMTYPE      ;CREATE THE NEXT ONE.
+        NEWP   ( PRES,AMTYPE )      ;CREATE THE NEXT ONE.
 LOGO1S  LDX    #LGOTAB
         STX    LGOPTR
         BRA    LOGO0            ;CONTINUE
 *
 *ELECTRONICS PRESENTS
 *
-PRES    NEWP   DEFEND,AMTYPE    ;CREATE DEFEND.
+PRES    
+NEWP   ( DEFEND,AMTYPE )    ;CREATE DEFEND.
 PRES1   LDX    #$3258
         LDU    #ELECV
-        MLJSR  2,WTEXTB
+        MLJSR  ( 2,WTEXTB )
         LDA    #5
         LDX    #PRES1
         JSR    SLEEPP
 *
 *DEFENDER
 *
-DEFEND  NAPP   $30,DEFENS       ;START APPEARS
+DEFEND  
+NAPP   ( $30,DEFENS )       ;START APPEARS
 DEFENS  LDD    #DEFPIC          ;INITIALIZE DESCRIPTER POINTER
         STD    DEFSPT
         LDD    #DEFBLK          ;INITIALIZE DATA POINTER
@@ -842,15 +876,17 @@ DEF1    LDX    DEFRPT
         CMPY   #DEFPIC+4*15     ;DONE?
         BNE    DEF1
 *
-DEF2    NAPP   $2E,DEF33
+DEF2    
+NAPP   ( $2E,DEF33 )
 DEF33   LDX    #DEFDSC          ;MAKE WHOLE DEFENDER DESCRIPTER
         LDD    #$3C18
         STD    ,X
         LDD    #DEFBLK
         STD    2,X
-        NEWP   DEF50,AMTYPE     ;START WHOLE DEFENDER RESTORE
-        NAPP   $28,DEF44
-DEF44   NEWP   CBOMB,AMTYPE
+        NEWP   ( DEF50,AMTYPE )     ;START WHOLE DEFENDER RESTORE
+        NAPP   ( $28,DEF44 )
+DEF44   
+NEWP   ( CBOMB,AMTYPE )
 *
 *COPYRIGHT
 *
@@ -885,14 +921,14 @@ CPR4    STB    ,X+
         STU    D,X              ;TRANSFER CURSER
 WILCK1  LDA    #1               ;SET POWER FLAG
         STA    PWRFLG
-        NEWP   CREDS,AMTYPE     ;TURN ON CREDITS
+        NEWP   ( CREDS,AMTYPE )     ;TURN ON CREDITS
         LDA    #60              ;DELAY TIMER
         STA    STALT
 CPR55   TST    ICREDF           ;CHECK FOR INCREASE IN CREDITS
         LBNE   LEDRET           ;YES?, GIVE INSTRUCTIONS
         DEC    STALT            ;TIME OUT?
         BEQ    CPR56
-        NAPP   10,CPR55         ;NOPE, NOT YET
+        NAPP   ( 10,CPR55 )         ;NOPE, NOT YET
 CPR56   JMP    HALDIS           ;DISPLAY HALL OF FAME
 *
 *"DEFENDER" WHOLE WRITING ROUTINE
@@ -904,9 +940,10 @@ DEF50   LDY    #DEFDSC          ;DESCRIPTER
         BNE    DEF51
         TST    RAMALS+RAMSIZ    ;CHECK ANOTHER TO BE SURE
         BNE    DEF51
-        NEWP   WILLIR,AMTYPE    ;APPEAR DONE, QUICK RSTORE LOGO
+        NEWP   ( WILLIR,AMTYPE )    ;APPEAR DONE, QUICK RSTORE LOGO
         JMP    SUCIDE
-DEF51   NAPP   1,DEF50          ;SLEEP 1, REFRESH
+DEF51   
+NAPP   ( 1,DEF50 )          ;SLEEP 1, REFRESH
 *
 *"DEFENDER" DATA EXPANDER
 *
@@ -983,17 +1020,18 @@ CREDS   LDB    CREDIT           ;GET CREDITS
         INC    ICREDF           ;SET INCREASE CREDIT FLAG
 CREDS1  LDU    #CREDV           ;MESSAGE VECTOR
         LDX    #$28E5           ;SCREEN ADDRESS
-        MLJSR  2,WTEXTB         ;WRITE TO SCREEN
+        MLJSR  ( 2,WTEXTB )         ;WRITE TO SCREEN
         CLRA                    ;NO HIGH
         LDX    #$48E5           ;PLACE FOR NUMBERS
-        MLJSR  2,WNUMBB         ;WRITE IT
-CREDS2  NAPP   16,CREDS         ;SLEEP 16
+        MLJSR  ( 2,WNUMBB )         ;WRITE IT
+CREDS2  
+NAPP   ( 16,CREDS )         ;SLEEP 16
 *
 *WILLIAMS LOGO FAST RESTORE
 *
 WILLIR  LDA    #$FF             ;FAST RATE
         STA    LGOFLG
-        NAPP   2,WILR1          ;SLEEP 2
+        NAPP   ( 2,WILR1 )          ;SLEEP 2
 WILR1   LDA    #10              ;BACK TO OLD RATE
         STA    LGOFLG
         JMP    SUCIDE
@@ -1111,7 +1149,7 @@ DEFDAT  FCB    $10,$D1,$BD,$29,$C2,$9C,$29,$CB
         FCB    $6E,$34,$D1,$4E,$15,$CC,$36,$C3
         FCB    $5C,$14,$2D,$34,$C7,$1C,$14,$C2
         FCB    $51,$C2,$7D,$14,$F1,$4C
-DEFDEN  EQU    *
+DEFDEN  ;EQU    *
 *
 *"DEFENDER" COLOR TABLE
 *
@@ -1131,7 +1169,7 @@ CPRTAB  FCB    $3E,$41,$41,$22,$00,$3E,$41,$41
         FCB    $45,$22,$1C,$00,$00,$00,$42,$7F
         FCB    $40,$00,$26,$49,$49,$3E,$00,$36
         FCB    $49,$49,$36,$00,$3E,$41,$41,$3E
-CPREND  EQU    *
+CPREND  ;EQU    *
 
 TEXTAB  FDB    $4330
         FDB    $1C70
@@ -1140,7 +1178,9 @@ TEXTAB  FDB    $4330
         FDB    $1CA8
         FDB    $40A8
         FDB    $5CA8
-TENT    EQU    *-TEXTAB
+
+TENT    equ 8 * 2 ; EQU    *-TEXTAB
+
         FDB    SCANV
         FDB    LANDV
         FDB    MUTV
@@ -1149,15 +1189,15 @@ TENT    EQU    *-TEXTAB
         FDB    SWRMPV
         FDB    SWARMV
 
-YS      EQU    *
+YS      ; EQU    *
 ENMYTB  FDB    $6000
         FDB    $6000
         FDB    $6200
         FDB    $9800
         FDB    $9800
         FDB    $9A00
-OTABND  EQU    *
-OLEN    EQU    *-ENMYTB
+OTABND  ; EQU    *
+OLEN    EQU    6 * 2 ; *-ENMYTB
 PICTS   FDB    LNDP1
         FDB    SCZP1
         FDB    UFOP1

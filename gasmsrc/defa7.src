@@ -647,7 +647,7 @@ COIN    LDA    SLMCNT
         STA    ,X
         LDA    #LCOINV>>8       ;ROUTINE ADDR
         STD    PD2,U
-        NAP    10,CN1
+        NAP    ( 10,CN1 )
 CN1     LDA    SLMCNT
         BNE    SLAMX            ;SLAM, DITCH
         LDD    #CNSND
@@ -754,7 +754,7 @@ SNDS0   STA    SNDREP
 SNDS1   LDD    1,X
         STA    SNDTMR
 SNDSX1  BSR    SNDOUT
-SNDSX   EQU    *
+SNDSX   ; EQU    *
 *
 *SWITCH SCAN
 *TRIGGER=LAST 2 ZERO, NOW 1 GAME SWITCH
@@ -1016,7 +1016,7 @@ INIT12  STB    CREDIT           ;INTO RAM
         BSR    PINIT            ;INIT PROCESSES
         BSR    INIT20           ;MISC ROUTINES
         JSR    INIT             ;INIT TEXT
-        NEWP   ATTR,ATYPE
+        NEWP   ( ATTR,ATYPE )
         COM    STATUS           ;FF---STATUS
         ANDCC  #$00             ;ENABLE IRQ,FIRQ
         JMP    EXEC
@@ -1033,7 +1033,7 @@ INIT20  BSR    CRINIT
 *INITIALIZE PROCESS DATA STRUCTURE
 *
 PINIT   PSHS   X,D
-        CLRD 
+        CLRD()
         LDX    #PTAB
         STX    FREE
 PINIT1  LEAX   PSIZE,X
@@ -1105,7 +1105,8 @@ ST1     LDA    STATUS
         LDD    #ST1SND
 ST09    JSR    SNDLD
         BSR    START
-ST1X    DIE  
+ST1X    
+		DIE  ()
 *
 *TWO PLAYER START
 *
@@ -1159,7 +1160,7 @@ STTRAN  LDA    ,X+              ;COPY INTO SECOND PLAYER
         STA    PLDLEN-1,X
         CMPX   #P1END
         BNE    STTRAN
-        NEWP   PLSTRT,STYPE     ;START PLAYER GOING
+        NEWP   ( PLSTRT,STYPE )     ;START PLAYER GOING
 START2  INC    PLRCNT
         LDA    CREDIT
         ADDA   #$99
@@ -1171,7 +1172,7 @@ START2  INC    PLRCNT
         DECA 
         BEQ    STARTX
         JSR    TDISP            ;DISPLAY SCORE+LASERS
-DRTS    EQU    *
+DRTS    ;EQU    *
 STARTX  RTS  
 *
 *SCREEN SWITCHING
@@ -1216,13 +1217,14 @@ PLSTR0  JSR    INIT20           ;RE:INIT THE BOYS
         BNE    PLSTR1
         LDX    ,X
         BEQ    PLSTR2
-PLSTR1  NAP    15,PLST1A        ;WAIT FOR COINS TO FINISH
+PLSTR1  
+		NAP    ( 15,PLST1A )        ;WAIT FOR COINS TO FINISH
 PLST1A  LDA    LCCNT
         ORA    RCCNT
         ORA    LCCNT
         BNE    PLSTR1
 PLSTR2  JSR    PINIT            ;REINIT
-        NEWP   PLSTR3,STYPE
+        NEWP   ( PLSTR3,STYPE )
         JMP    EXEC
 PLSTR3  CLRA 
         JSR    MAPCHG           ;SELECT 0
@@ -1280,12 +1282,12 @@ PLSTR5  CLRA
         STD    PLAXV
         STA    PLAXV+2
         STD    PLAYV
-        NEWP   SCPROC,STYPE
-        NEWP   COLR,STYPE
-        NEWP   FLPUP,STYPE
-        NEWP   THPROC,STYPE
-        NEWP   CBOMB,STYPE
-        NEWP   TIECOL,STYPE
+        NEWP   ( SCPROC,STYPE )
+        NEWP   ( COLR,STYPE )
+        NEWP   ( FLPUP,STYPE )
+        NEWP   ( THPROC,STYPE )
+        NEWP   ( CBOMB,STYPE )
+        NEWP   ( TIECOL,STYPE )
         LDA    PDFLG            ;NO CHANGE IN PLAYER
         BEQ    PLS01
         LDB    PLRCNT           ;2 PLAYER GAME?
@@ -1408,7 +1410,7 @@ PLEM1   LDX    #$3C78
         LDU    #GO
         LDX    #$3E88
         JSR    MESS
-        NAP    $60,PLE02
+        NAP    ( $60,PLE02 )
 PLE02   LDA    CURPLR
 PLELP   INCA 
         CMPA   PLRCNT
@@ -1428,7 +1430,7 @@ PLE2    LDU    #GO              ;GAME OVER
         CLR    SNDTMR           ;OFF SOUNDS
         LDB    #$13
         JSR    SNDOUT
-        NAP    40,PLE3
+        NAP    ( 40,PLE3 )
 PLE3    JMP    ATTR
 *PLAYER GLOW TABLE
 PXCTB   FCB    7,7,7,$F,$3F,$7F,$FF,$FF,0
@@ -1516,7 +1518,8 @@ PLSAV7  STA    ,U+
 *B=BIT 6,7 OF XADDR
 ASTST   PSHS   D
         STA    XTEMP+1
-ASTST1  OBI    ASTP1,ASTKIL,$6666
+ASTST1  
+		OBI    ( ASTP1,ASTKIL,$6666 )
         JSR    RAND
         LDD    HSEED
         ANDA   #$1F
@@ -1545,7 +1548,8 @@ ASTS2   LDA    #$E0
 *START ASTROS+BASES
 *GET ENEMY COUNTS+PARAMS
 *
-PLRES   NEWP   ASTRO,STYPE
+PLRES   
+	NEWP   ( ASTRO,STYPE )
         LDU    #TLIST
         LEAY   ,U
         STU    PD,X             ;INIT PTR
@@ -1728,7 +1732,8 @@ GEX50   STA    GTIME
         JSR    WDELT
         LDA    #40
         STA    PD,U
-GEX6    NAP    15,GEX0
+GEX6    
+	NAP    ( 15,GEX0 )
 *
 *RANDOM MAX ROUTINE
 *A = RAND <=A
@@ -1835,13 +1840,13 @@ BCLPA   ASLB
         ASLB 
         JSR    SCORE
         STX    PD,U
-        NAP    4,BC1
+        NAP    ( 4,BC1 )
 BC1     LDX    PD,U
         DEC    PD2,U            ;ALL DONE?
         BNE    BCLP             ;NO
 BC2     LDX    PLRX
         JSR    GETWV
-        NAP    $80,BC3          ;HANG OUT
+        NAP    ( $80,BC3 )          ;HANG OUT
 BC3     JMP    [PD+6,U]         ;RETURN
 *
 *GET NEW WAVE PARAMS
@@ -2090,13 +2095,13 @@ STI1    JSR    RAND
         LEAX   SLGTH,X
         CMPX   #SMEND
         BNE    STI0
-STX     RTS  
+STX_1     RTS  
 *
 *OUTPUT STARS
 *
 STOUT   LDA    STATUS
         BITA   #$20
-        BNE    STX              ;NO
+        BNE    STX_1              ;NO
         LDX    #SMAP
         LDD    BGL
         ANDB   #$80
@@ -2329,7 +2334,7 @@ POUT1   LDY    #PLBPIC
 *
 *PLAYER OFF
 *
-POFF    EQU    *
+POFF    ;EQU    *
 POFF1   LDD    PLAXC
         JMP    OFF86
 *
@@ -2411,7 +2416,8 @@ PV3     CMPD   #-$100
         LDD    #-$100
         ADDD   PLAX16           ;ADJUST SLIDE
         BRA    PV10
-PV9     CLRD 
+PV9
+		CLRD()
         STD    BGDELT           ;NO ADJUST NEEDED
         LDD    PCX              ;WERE OK
 PV10    STD    PLAX16
@@ -2660,7 +2666,8 @@ SHB1    LDD    #0               ;CLEAR IT
         LDD    4,U
         STD    $101,Y
         BRA    SHELLP
-SHBD    CLRD     KILL             ;AND ERASE
+SHBD    
+		CLRD()     ; KILL             ;AND ERASE
         STA    ODATA+1,X
         STD    ,Y
         STA    2,Y
@@ -2827,7 +2834,7 @@ LASR3   LDB    ,Y+
         SUBA   #$06
         BSR    LCOL
         BNE    LRDIE
-        NAP    1,LASR0
+        NAP    ( 1,LASR0 )
 LRDIE   LDX    PD+4,U
         CLRA 
 LRDLP   STA    ,X
@@ -2875,7 +2882,7 @@ LASL3   LDB    ,Y+
         LDD    PD,U
         JSR    LCOL
         BNE    LLDIE
-        NAP    1,LASL0
+        NAP    ( 1,LASL0 )
 LLDIE   LDX    PD+4,U
         CLRA 
 LLDLP   STA    ,X
@@ -3112,7 +3119,7 @@ SWP3    ANDB   STATUS
         BNE    SWP
         JSR    MKPROC
         BRA    SWP
-SWPX    EQU    *
+SWPX    ;EQU    *
 *
 *PROCESS DISPATCH
 *
@@ -3145,7 +3152,8 @@ COLC1   PSHS   D,U
         LDX    #SPTR
         JSR    COL0
         BEQ    COLCX
-COLC2   NEWP   PLEND,STYPE
+COLC2   
+		NEWP   ( PLEND,STYPE )
         LDA    STATUS
         ORA    #$8
         STA    STATUS
@@ -3162,11 +3170,12 @@ REV     LDA    REVFLG
         COMA 
         ADDD   #1
         STD    NPLAD
-REV1    NAP    2,REV2
+REV1    
+		NAP    ( 2,REV2 )
 REV2    LDA    PIA21
         BITA   #$40
         BNE    REV1
-        NAP    5,REVX1
+        NAP    ( 5,REVX1 )
 REVX1   CLR    REVFLG
 REVX    JMP    SUCIDE
 *
@@ -3197,14 +3206,15 @@ SBMBX   LDU    CRPROC
         LDA    #4               ;SCREEN FLASHES/2
         STA    PD,U
 SBMBX0  COM    PCRAM
-        NAP    2,SBMBX1
+        NAP    ( 2,SBMBX1 )
 SBMBX1  DEC    PD,U
         BNE    SBMBX0
-SBX10   NAP    10,SBX1A         ;SWITCH DEBOUNCE
+SBX10   
+		NAP    ( 10,SBX1A)         ;SWITCH DEBOUNCE )
 SBX1A   LDA    PIA21
         BITA   #$4
         BNE    SBX10
-        NAP    10,SBX2A
+        NAP    ( 10,SBX2A )
 SBX2A   CLR    SBFLG
 SBMBX2  JMP    SUCIDE
 *
@@ -3216,7 +3226,7 @@ HYPER   LDA    STATUS
         LDA    #$77
         STA    STATUS
         JSR    SCLR1
-        NAP    15,HYP02
+        NAP    ( 15,HYP02 )
 HYP02   LDX    SPTR             ;KILL BULLETS
         BEQ    KB2
         JSR    KILSHL
@@ -3248,7 +3258,7 @@ HYP00   STD    PLAX16
 *APPEAR PLAYER
         LDB    #$50
         JSR    STCHK0
-        OBI    PLAPIC,NOKILL,$0000 ;CREATE PHONY OBJECT
+        OBI    ( PLAPIC,NOKILL,$0000 ) ;CREATE PHONY OBJECT
         LDD    #0
         STD    OXV,X
         STD    OYV,X
@@ -3268,7 +3278,7 @@ HYP00   STD    PLAX16
 HYP1    LDU    CRPROC
         STX    PD,U
         JSR    APVCT
-        NAP    $28,HYP2
+        NAP    ( $28,HYP2 )
 HYP2    LDX    PD,U
         JSR    KILOFF
         JSR    STCHK            ;RESET STATUS
@@ -3291,20 +3301,20 @@ THPR1   STX    THX
         BLS    THPR2
         LDX    #FBTAB
 THPR2   STX    FBX
-        NAP    4,THPROC
+        NAP    ( 4,THPROC )
 *
 *SCANNING PROCESS
 *MAINTAINANCE OF ACTIVE,INACTIVE OBJECT LISTS
 *SCANNER DISPLAY
 *
 SCPROC  JSR    ISCAN
-        NAP    2,SCP1
+        NAP    ( 2,SCP1 )
 SCP1    JSR    OSCAN
         JSR    SHSCAN
-        NAP    2,SCP2
+        NAP    ( 2,SCP2 )
 SCP2    JSR    MAPCH1
         JSR    SCNRV
-        NAP    4,SCPROC
+        NAP    ( 4,SCPROC )
 *
 *SCAN ACTIVE OBJECTS FOR OFF SCREEN AREA
 *
