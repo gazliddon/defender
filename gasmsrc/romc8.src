@@ -445,7 +445,7 @@ INITDP  PSHS   D
         STD    NUMBER
         PULS   D,PC
 * ZERO COLORS
-ZCOLRS  EQU    *
+ZCOLRS  ;EQU    *
 ZEROCL  PSHS   X,B
         CLRB 
         LDX    #$C000
@@ -795,7 +795,7 @@ DEFALT  FCB    $02,$12,$70      ;CRHSTD
         FCC    "SSR"
         FCB    $00,$60,$10      ;THSTD7
         FCC    "TMH"
-HSDEFE  EQU    *                ;END OF HIGH SCORE DEFAULTS
+HSDEFE  ;EQU    *                ;END OF HIGH SCORE DEFAULTS
         FCB    $00              ;DIPSW
         FCB    $5A              ;CMOSCK
         FCB    $01,$00          ;REPLAY @10,000
@@ -818,7 +818,8 @@ HSDEFE  EQU    *                ;END OF HIGH SCORE DEFAULTS
         FCB    $00              ;GA8
         FCB    $00              ;GA9
         FCB    $00              ;GA10
-DEFSIZ  EQU    *-DEFALT
+; DEFSIZ  EQU    *-DEFALT
+DEFSIZ  EQU    $47
 *
 * COINAGE SELECT TABLE
 *
@@ -834,5 +835,9 @@ CSELCT  FCB    $01,$04,$01,$02,$04,$00 ;50C..3/$1.00
 * COPYRIGHT
 *
 CRIGHT  FCC    "COPYRIGHT 1980 - WILLIAMS ELECTRONICS"
-ENDPGM  EQU    *
-        END  
+ENDPGM  ;EQU    *
+        ;END  
+
+		org $cff0     ; Gaz: This was patched into defend.10. Removed patch and added FCB
+		fcb $4A
+

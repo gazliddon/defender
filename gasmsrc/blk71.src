@@ -188,7 +188,12 @@ TTER08  LDD    BGL
         BNE    TTER02
         LDS    TTBLP1           ;CHANGE TO FLAVOR 1
 TTER02  LDA    #$98
-TTER03  COMF                    ;Was: 'STX [,Y]'  ;FAST OUTPUT
+
+; TTER03  STX [,Y]  ;FAST OUTPUT
+TTER03  ;Was: 'STX [,Y]'  ;FAST OUTPUT TODO! TODO!
+
+		FDB 0x1153
+
         PULS   B,U
         STD    ,Y
         STU    [,Y++]
@@ -720,5 +725,5 @@ WVTAB   FCB    20,0,0,0
         FCB    15,13,12,10      ;UFSTIM
         FCB    200,40,$F4,$F8
         FCB    240,220,200,200  ;UFOSK
-WVTEND  EQU    *
-        END  
+WVTEND  ; EQU    *
+        ; END  

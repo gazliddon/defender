@@ -434,7 +434,7 @@ ASTC1   CMPY   ,U++
         BNE    ASTC1
         JSR    ERROR
 ASTC2   
-CLRD ()
+		CLRD()
         STD    -2,U
         DEC    ASTCNT
         BNE    ASTCX
@@ -617,7 +617,7 @@ SCZS1   ADDD   XTEMP2           ;AVOID PLAYER
         LSRA 
         ADDA   #YMIN
         STA    OY16,X
-        CLRD 
+        CLRD()
         STD    OYV,X
         STD    OXV,X
         LDA    SZSTIM
@@ -704,7 +704,7 @@ LANDS0  LDX    PD,U
         LDD    [PD4,U]          ;TARGET ALIVE?
         BEQ    LNDSAA
         LDA    OCVECT+1,Y
-        CMPA    #(ASTKIL<<8&$FF00)>>8
+        CMPA    #(( ASTKIL<<8 )&$FF00)>>8
         BNE    LNDSAA           ;ORBIT
         LDA    OX16,X
         ANDA   #$FC
@@ -745,10 +745,10 @@ LANDS2  STD    OYV,X            ;NEW Y VEL
         LDU    #LNDP1
 LANDS3  STU    OPICT,X
 LANDS4  
-NAP    ( 6,LANDS0 )
+		NAP(6,LANDS0)
 *LETS GET HIM
 LANDG0  
-CLRD ()
+		CLRD()
         INC    OTYP,X           ;DONT HYPER ME
         STD    OXV,X
         STD    OYV,X
@@ -759,7 +759,7 @@ LANDG   LDX    PD,U
         LDD    [PD4,U]
         BEQ    LNDSAA           ;DEAD
         LDA    OCVECT+1,Y
-        CMPA    #(ASTKIL<<8&$FF00)>>8
+        CMPA    #(( ASTKIL<<8 )&$FF00)>>8
         BNE    LNDSAA           ;TAKEN
         LDD    OX16,Y
         ANDB   #$E0
@@ -824,7 +824,7 @@ LNDFXA  LDX    PD,U
         INC    LNDRES
         JMP    SUCIDE
 LNDFX0
-CLRD ()
+		CLRD ()
         STD    OYV,X
         STD    OYV,Y
         LDA    OY16,Y
@@ -880,7 +880,7 @@ SCZ1    SEX
 SCZ2    CMPA   #-8
         BGT    SCZ4
 SCZ3
-CLRD ()
+		CLRD ()
         BRA    SCZ5
 SCZ4    LDD    SZYV
 SCZ5    STD    OYV,X
@@ -1006,7 +1006,7 @@ TIEST1  STB    XTEMP+1          ;X VELOCITY
         LEAU   ,X               ;SAVE INDEX
         LDA    XTEMP
         STA    PD+8,U
-        CLRD 
+        CLRD ()
         STD    PD,U
         STD    PD2,U
         STD    PD4,U
@@ -1016,7 +1016,7 @@ OBI    ( TIEP1,TIEKIL,$8888 )
         LDB    XTEMP+1
         SEX  
         STD    OXV,X
-        CLRD 
+        CLRD ()
         STD    OYV,X
         LDA    XTEMP            ;X SPACING
         LSRA 
@@ -1143,7 +1143,7 @@ KILO   ( $0125,TIHSND )
         LEAY   PD,U
 TIEK1   CMPX   ,Y++
         BNE    TIEK1
-        CLRD 
+        CLRD ()
         STD    -2,Y
         DEC    PD+8,U
         BNE    TIEKX
@@ -1665,7 +1665,7 @@ ROM1    CLR    MAPC             ;RESET WATCHDOG
         TFR    D,X              ;ADDRESS IN X
         LDY    #$800            ;SET BYTE COUNTER
         TFR    U,D              ;INITIALIZE CHECKSUM TO ROM NUMBER
-        SUBB    #(ROMMAP-2<<8&$FF00)>>8
+        SUBB    #((( ROMMAP-2 )<<8)&$FF00)>>8
         LSRB 
         CLRA                    ; CLEAR CARRY
 *ADDER LOOP

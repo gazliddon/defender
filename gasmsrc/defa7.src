@@ -1,14 +1,14 @@
 *
 * PRAYAH 1:     P L O G L A M    S T A H T
 *
-        ORG    $D000
-        FCB    $4A              ;CKBYT CHECKSUM(ACTUAL)
-        SETDP  RAM>>8
-*
+        setdp  RAM>>8
+        org    $D000
+        fcb    $4A              ;CKBYT CHECKSUM(ACTUAL)
+        setdp  RAM>>8
 *SLEEP
 *A=SLEEP TIME X 16MSEC
 *X=WAKEUP ADDR
-*
+
 SLEEP   LDU    CRPROC
         STA    PTIME,U
         STX    PADDR,U
@@ -55,8 +55,8 @@ ERROR   NOP                     ; ERROR TRAP
 *X =RETURNED WITH DATA BLOCK POINTER
 MSPROC  PSHS   A,Y,U
         LDU    SPFREE
-        BNE    *+3
-        JSR    ERROR            ;ERROR TRAP
+        BNE    !next + 1
+!next   JSR    ERROR            ;ERROR TRAP
         LDY    ,U
         STY    SPFREE
         LDA    #1
@@ -132,7 +132,7 @@ GETOB1  LDD    ,X               ;Fixmme: fix asm6809, was OLINK,X
         STD    OFREE
         LDD    OPTR
         STD    OLINK,X
-        CLRD 
+        CLRD()
         STD    OBJX,X
         STA    OTYP,X           ;CLEAR TYPE
         PULS   U,D,PC
@@ -626,15 +626,15 @@ SLAMX   JMP    SUCIDE
 *COIN SWITCHES
 *LEFT
 LCOIN   LDX    #LCCNT
-        LDB    #(LCOINV<<8&$FF00)>>8
+        LDB    #((LCOINV<<8)&$FF00)>>8
         BRA    COIN
 *RIGHT
 RCOIN   LDX    #RCCNT
-        LDB    #(RCOINV<<8&$FF00)>>8
+        LDB    #((RCOINV<<8)&$FF00)>>8
         BRA    COIN
 *CENTER
 CCOIN   LDX    #CCCNT
-        LDB    #(CCOINV<<8&$FF00)>>8
+        LDB    #(( CCOINV<<8 )&$FF00)>>8
 *
 *COIN ROUTINE
 *X=DEBOUNCE COUNTER
@@ -1073,7 +1073,7 @@ OINIT1  LEAX   OSIZE,X
         STX    -OSIZE,X
         CMPX   #OLEND-OSIZE
         BNE    OINIT1
-        CLRD 
+        CLRD()
         STD    ,X               ;LAST LINK 0
         STD    IPTR             ;INACTIVE LIST
         STD    OPTR
@@ -1278,7 +1278,7 @@ PLSTR5  CLRA
         STD    PLABX
         LDD    #$8000
         STD    PLAY16
-        CLRD 
+        CLRD()
         STD    PLAXV
         STA    PLAXV+2
         STD    PLAYV
@@ -1533,7 +1533,7 @@ ASTS2   LDA    #$E0
         STA    OY16,X
         LDA    #$10
         STA    OTYP,X           ;NON COLLIDE
-        CLRD 
+        CLRD()
         STD    OYV,X
         STD    OXV,X
         STD    OBJID,X
@@ -2521,7 +2521,7 @@ OPLP0   LDD    OBJX,X
         BLS    OPLP             ;YES
         LDY    OPICT,X
         JSR    [OBJDEL,Y]
-        CLRD 
+        CLRD()
         STD    OBJX,X           ;OFF OBJECT
 *ON NEW OBJECT
 OPON    LDB    OY16,X           ;CAN WE WRITE
@@ -2582,7 +2582,7 @@ GETSHL  PSHS   D,Y,U
         EXG    A,B
         STD    OY16,X
         STU    OBJID,X
-        CLRD 
+        CLRD()
         STD    OXV,X
         STD    OYV,X
         LDU    6,S
@@ -2937,7 +2937,7 @@ IC1     STU    CTEMP2           ;SAVE PLAYER DESC
         LDY    OPICT,X
         SUBD   ,Y               ;SAVE OBJX FROM IRQ
         STD    XTEMP
-        CLRD                    ;CLEAR OFFSETS
+        CLRD()                    ;CLEAR OFFSETS
         STD    OX1              ;GET OBJECT
         STD    PX1              ;PLAYER
         LDD    XTEMP
@@ -3053,7 +3053,7 @@ COLTAB  FCB    $38,$39,$3A,$3B,$3C
 EXEC    LDX    #ACTIVE
         STX    CRPROC
 EXEC0   LDA    TIMER
-        FCB    $11,$13           ;Fixme was BEQ    EXEC0
+		BEQ    EXEC0
         CLR    TIMER
         LDB    STATUS
         BITB   #$7D
@@ -3250,7 +3250,7 @@ HYP00   STD    PLAX16
         ADDB   #YMIN
         STB    PLAY16
         STD    NPLAXC
-        CLRD 
+        CLRD() 
         STA    PLAXV+2
         STD    PLAXV
         STD    PLAYV

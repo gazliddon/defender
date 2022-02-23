@@ -1,5 +1,5 @@
 struct player_data {
-	PSCOR    : qword,
+	PSCOR    : dword,
 	PRPLA    : byte[3],
 	PLAS     : byte,
 	PWAV     : byte,
@@ -9,10 +9,10 @@ struct player_data {
 }
 
 struct smap {
-	SX : byte,
-	SY : byte,
+	SX   : byte,
+	SY   : byte,
 	SCOL : byte[2],
-	_SPARE : byte[(16-1) * 4 ]
+	_    : byte[(16-1)*4]
 }
 
 ; NAP     MACRO  \1,\2
@@ -112,8 +112,8 @@ macro 	DIE()  {
 ;         ENDM 
 
 macro NEWP(addr, type) {
-        LDX    #|addr|            ;ADDR
-        LDA    #|type|             ;TYPE
+        LDX    #|addr|  ;ADDR
+        LDA    #|type|  ;TYPE
         JSR    MKPROC
 }
 

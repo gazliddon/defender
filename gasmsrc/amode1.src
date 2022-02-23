@@ -64,8 +64,8 @@ macro NAPP (a,b) {
 ;         ENDM 
 macro MLJSR   (a,b) {
         JSR    LJSRV
-        FDB    |a|
-        FCB    |b|
+        FDB    |b|
+        FCB    |a|
 }
 
 *SAM EQUATES
@@ -150,7 +150,7 @@ HALLOF  JSR    GNCIDE           ;KILL ALL PROCESSES
         JSR    STINIT           ;REINITIALIZE STARS
         LDA    CREDIT           ;INITIALIZE OLD CREDITS
         STA    OCRED
-        CLRA 
+        CLRA
         STA    ICREDF           ;CLEAR CREDIT INCREASE FLAG
         STA    ENTFLG           ;CLEAR ENTRY FLAG
         LDA    PWRFLG           ;CHECK FOR POWER ON INITIALIZATION

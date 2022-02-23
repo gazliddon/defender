@@ -1,0 +1,13 @@
+	org 0
+	incbin "../bin/blk71.o",0,$772
+	org $778
+	incbin "../bin/roms.o",$a778,$88
+
+	org $772
+	fcb 00,00,00,00,00,00
+
+	org $de
+	fcb $af, $b4
+
+	org $7f0
+	fcb $17

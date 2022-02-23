@@ -24,7 +24,7 @@ TOTPDC  RMB    4                ;TOTAL PAID CREDITS
 TOTRPL  RMB    4                ;TOTAL REPLAYS
 BLLTIM  RMB    4                ;BALL TIME IN MINS
 BLLCNT  RMB    4                ;TOTAL "BALLS" PLAYED
-CMSDEF  EQU    *
+CMSDEF  ;EQU    *
 CRHSTD  RMB    12               ;FOR ALL TIME HSTD
 CRHST1  RMB    12               ;ALL TIME #2
 CRHST2  RMB    12
@@ -33,7 +33,7 @@ CRHST4  RMB    12
 CRHST5  RMB    12
 CRHST6  RMB    12
 CRHST7  RMB    12
-CREDST  EQU    *                ;CREDITS BACKUP
+CREDST  ;EQU    *                ;CREDITS BACKUP
 DIPSW   RMB    2                ;FOR DIPSW FUNCTIONS
         ORG    CMOSS-1          ;PUT IT ACCROSS BOUNDARY
 CMOSCK  RMB    2                ;FOR BOUNDARY BYTE
@@ -690,4 +690,4 @@ LDBXBV  JMP    LDBXB0
         ORG    $FFFC
         FDB    RESET            ;NMI TOO
         FDB    RESET
-        PAGE 
+        ; PAGE 

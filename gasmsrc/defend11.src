@@ -1,0 +1,5 @@
+	org 0
+	incbin "../bin/roms.o", 0x800, 0x800
+
+	org $450
+	incbin "unknown.bin"

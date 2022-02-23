@@ -324,7 +324,7 @@ HALEN   FDB    PNUMB
         FDB    INITDS
         FCB    HMT,$13
         FDB    SCOREN
-MEND    EQU    *
+MEND    ; EQU    *
 *
 *       WORDS
 *
@@ -488,7 +488,7 @@ ALPHA0  FDB    $0308,BLANK      ;BLANK BLOCK
 * CHARACTERS
 *
 *SPACE AND BLANK
-SPACE   EQU    *
+SPACE   ; EQU    *
 BLANK   FDB    0,0,0,0,0,0
         FDB    0,0,0,0,0,0      ;(BSZ 3*8)
 * EXCLAMATION POINT

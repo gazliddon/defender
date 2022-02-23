@@ -830,7 +830,7 @@ WHORZ   FDB    $0707
         FDB    $97D3
         FDB    $07F5
         FDB    $97F5
-WHORZX  EQU    *
+WHORZX  ;EQU    *
 WVERT   FDB    $0607
         FDB    $06F5
         FDB    $1607
@@ -851,7 +851,7 @@ WVERT   FDB    $0607
         FDB    $86F5
         FDB    $9607
         FDB    $96F5
-WVERTX  EQU    *
+WVERTX  ;EQU    *
 HORIZ   FDB    $4805
         FDB    $5505
         FCB    $44
@@ -888,7 +888,7 @@ HORIZ   FDB    $4805
         FDB    $577E
         FDB    $967E
         FCB    $22
-HORIZX  EQU    *
+HORIZX  ;EQU    *
 VERT    FDB    $056F
         FDB    $058E
         FCB    $04
@@ -901,7 +901,7 @@ VERT    FDB    $056F
         FDB    $976F
         FDB    $978E
         FCB    $34
-VERTX   EQU    *
+VERTX   ;EQU    *
 * RED FIELD
 RFIELD  JSR    SCRCLV           ;CLEAR SCREEN
         LDB    #$5              ;COLOR RED
@@ -925,4 +925,4 @@ COLBAR  LDY    #CBARCL          ;SET COLORS
 WHITE   LDB    #$A5             ;WHITE LETTERS
 SETCOL  LDX    #LETCOL          ;POINT TO IT
         JMP    OUTB0            ;MAKE IT THAT COLOR
-        PAGE 
+        ; PAGE 

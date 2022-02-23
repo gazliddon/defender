@@ -1,0 +1,7 @@
+	org 0
+	incbin "../bin/defa7-defb6-amode1.o",0x0800,0x0800
+	org 0x6e9
+	incbin "../bin/defa7-defb6-amode1.o",0xaee9,0x117
+
+
+

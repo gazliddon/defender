@@ -1,0 +1,7 @@
+	org 0
+	incbin "../bin/defa7-defb6-amode1.o",$d000,$0c60
+	org $c60
+	incbin "../bin/samexap7.o",$0000,$02f8
+	org $f58
+	incbin "../bin/defa7-defb6-amode1.o",$df58,$a8
+
