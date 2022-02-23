@@ -2,7 +2,7 @@
 * PRAYAH 1:     P L O G L A M    S T A H T
 *
         setdp  RAM>>8
-        org    $D000
+        ORG    $D000
         fcb    $4A              ;CKBYT CHECKSUM(ACTUAL)
         setdp  RAM>>8
 *SLEEP

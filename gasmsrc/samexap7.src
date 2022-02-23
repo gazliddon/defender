@@ -13,7 +13,7 @@
 *
         ORG    APVCT
         JMP    APST             ;APPEAR START
-        JMP    EXST             ;EXPLOSION START
+        JMP    EXST_samexap7             ;EXPLOSION START
         JMP    EXPU             ;EXPANDED UPDATE
 *
 * APPEAR START
@@ -66,7 +66,7 @@ APST8   PULS   D,Y,U,PC
 * EXPLOSION START
 *  X=OBJECT POINTER
 *
-EXST    PSHS   U,Y,D
+EXST_samexap7    PSHS   U,Y,D
 * GET RAM ALLOCATION
         LDD    OX16,X           ;GET 16 BIT X COORDINATE
         SUBD   BGL              ;FIND SCREEN POSITION
@@ -378,4 +378,4 @@ DONE1   PULS   D,X,Y,U,PC       ;RESTORE REGISTERS, QUIT
 * STARTING POINT TABLE
 STARTS  FDB    STRT01,STRT23,STRT45,STRT67
         FDB    STRT89,STRTAB,STRTCD,STRTEF
-        END  
+        ; END  
