@@ -62,10 +62,11 @@ macro NAPP (a,b) {
 ;         FDB    \2
 ;         FCB    \1
 ;         ENDM 
-macro MLJSR   (a,b) {
+; Long JSR to another bank
+macro MLJSR   (bank,func) {
         JSR    LJSRV
-        FDB    |b|
-        FCB    |a|
+        FDB    |func|
+        FCB    |bank|
 }
 
 *SAM EQUATES
@@ -75,7 +76,7 @@ PNUMB   EQU    INITS+6
 INITDS  EQU    PNUMB+2
 SCOREN  EQU    INITDS+4
 
-        ORG    THTAB
+        ORG    THTAB ;; RAM
 *
 ***  SAMRAM
 *
@@ -137,7 +138,7 @@ YSHIP   EQU    $5000
 AMTYPE  EQU    0
 
         ORG    $C000
-        PUT    $2000
+        PUT    defend_9
 
         JMP    HALLOF           ;VECTORS
         JMP    SCNR
@@ -1349,7 +1350,7 @@ MTERR   FCB    $25,$70,$07,$26,$77,$00,$26,$07,$70,$24,$07,$70
         FCB    $26,$77,$00,$25,$77,$00,$25,$70,$07,$26,$77,$00
         FCB    $24,$07,$70,$23,$77,$00,$24,$77,$00,$22,$07,$70
         FCB    $23,$70,$07,$22,$07,$70,$21,$70,$07,$23,$70,$07
+tester
         ORG    $CF00
-        PUT    $2F00
+        PUT    defend_9 + $f00
         FCB    $C3              ;CHECKBYTE
-        END  

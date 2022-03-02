@@ -1,13 +1,15 @@
-	org 0
-	incbin "../bin/blk71.o",0,$772
-	org $778
-	incbin "../bin/roms.o",$a778,$88
 
-	org $772
-	fcb 00,00,00,00,00,00
+	org $c000
+    put defend_6
+	incbin "../../glht/gasm/bin/roms.o",defend_7,$800     ; Tailed of rom 7, romc0.src
 
-	org $de
-	fcb $af, $b4
+	org $c000
+    put defend_6
+	incbin "../../glht/gasm/bin/roms.o",defend_6,$778
 
-	org $7f0
+	org $c000 + $7f0
+	put defend_6 + $7f0
 	fcb $17
+
+;; blk71.src
+;; tailend of roms 7 

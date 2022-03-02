@@ -696,12 +696,12 @@ RHSTD   PSHS   X,Y,D            ;SAVE STATE
         LDY    #CRHSTD          ;POINT TO DESTINATION
         LDB    #48              ;6X8 TO MOVE
         JSR    CMOSMV           ;MOVE IT
-        BSR    RHSTDS           ;MOVE DEFALTS TO TODAY RAM
+        BSR    RHSTDS_routine           ;MOVE DEFALTS TO TODAY RAM
         PULS   X,Y,D,PC         ;GO BACK
 *
 * MOVE DEFALTS TO TODAYS HSTD AREA
 *
-RHSTDS  PSHS   X,Y,D            ;SAVE STATE
+RHSTDS_routine  PSHS   X,Y,D            ;SAVE STATE
         LDY    #DEFALT          ;POINT TO DEFALTS
         LDX    #THSTAB          ;DESTINATION
         LDB    #48              ;6X8 TO MOVE
@@ -839,5 +839,6 @@ ENDPGM  ;EQU    *
         ;END  
 
 		org $cff0     ; Gaz: This was patched into defend.10. Removed patch and added FCB
+		PUT defend_7 + $ff0
 		fcb $4A
 

@@ -11,7 +11,7 @@
 *SYSTEM EQUATES
 *
 SLEEPP  EQU    $FFD1            ;LONG SLEEP VECTOR
-PD2     EQU    9
+; PD2     EQU    9
 *
 * TERRAIN EQUATES
 *
@@ -29,10 +29,10 @@ PNBITS  EQU    $80              ;NUMBER OF PIECES
 *
         SETDP  $A0
         ORG    $A000
-TEMP1A  RMB    1
-TEMP1B  RMB    1
-TEMP1C  RMB    1
-TEMP2A  RMB    2
+TEMP1A_blk  RMB    1
+TEMP1B_blk  RMB    1
+TEMP1C_blk  RMB    1
+TEMP2A_blk  RMB    2
 TTBLP0  RMB    2                ;TERRAIN TABLE POINTER-FLAVOR 0
 TTBLP1  RMB    2                ;TERRAIN TABLE POINTER-FLAVOR 1
 LTPTR   RMB    2                ;LEFT TERRAIN DATA POINTER
@@ -44,8 +44,8 @@ RTCNT   RMB    1                ;RIGHT TERRAIN BIT COUNTER
 LOFF    RMB    1                ;LEFT VERTICAL OFFSET
 ROFF    RMB    1                ;RIGHT VERTICAL OFFSET
 SSTACK  RMB    2                ;HARDWARE STACK
-BGLX    RMB    2                ;OLD SCREEN LEFT ADDRESS
-TEMP2B  RMB    2
+BGLX_blk   RMB    2                ;OLD SCREEN LEFT ADDRESS
+TEMP2B_blk  RMB    2
 *
 * PLAYER EXPLOSION VARIABLES
 *
@@ -60,9 +60,9 @@ LPSED2  RMB    1                ;RANDOM SEED 2 LS BYTE
 *
 * SYSTEM VARIABLES
 *
-BGL     EQU    $A020            ;BACKGROUND LEFT
-IRQHK   EQU    $A024            ;IRQ HOOK
-PCRAM   EQU    $A026            ;COLOR RAM BUFFER TABLE
+;BGL     EQU    $A020            ;BACKGROUND LEFT
+;IRQHK   EQU    $A024            ;IRQ HOOK
+;PCRAM   EQU    $A026            ;COLOR RAM BUFFER TABLE
 *
 * TERRAIN TABLES
 *
@@ -80,23 +80,24 @@ TABLE   RMB    10*PNBITS
 * VECTORS
 *
         ORG    $C000
-        JMP    BGINIT           ;TERRAIN GENERATION
-        JMP    BGOUT            ;TERRAIN OUTPUT ROUTINE
+		PUT    defend_6
+        JMP    BGINIT_routine           ;TERRAIN GENERATION
+        JMP    BGOUT_routine            ;TERRAIN OUTPUT ROUTINE
         JMP    BGALT            ;TERRAIN ALTITUDE TABLE GENERATOR
-        JMP    BGERAS           ;TERRAIN ERASE
+        JMP    BGERAS_routine           ;TERRAIN ERASE
         FDB    MTERR            ;MINI TERRAIN DATA
         JMP    PLEX             ;PLAYER EXPLOSION
-        FDB    WVTAB            ;WAVE DATA TABLE
-        FDB    WVTEND           ;"
+        FDB    WVTAB_table            ;WAVE DATA TABLE
+        FDB    WVTEND_end           ;"
 *********************************************************
 *
 * TERRAIN GENERATION
 *
-BGINIT  LDD    BGL              ;GET LEFT TERRAIN POINTER
+BGINIT_routine  LDD    BGL              ;GET LEFT TERRAIN POINTER
         ANDB   #$E0             ;FIND NEAREST PIXEL
-        STD    TEMP2B
+        STD    TEMP2B_blk
         ADDD   #$2610           ;START ON RIGHT EDGE OF SCREEN
-        STD    BGLX
+        STD    BGLX_blk
         CLR    LTCNT            ;FIND TERRAIN POSITION
         LDX    #TDATA-1
         STX    LTPTR
@@ -104,7 +105,7 @@ BGINIT  LDD    BGL              ;GET LEFT TERRAIN POINTER
         STA    LOFF
         JSR    RFONL1           ;SETUP LEFT BYTE
         LDX    #$10             ;ROTATE PLANET TO FIND OFFSET
-TGEN1   CMPX   BGLX
+TGEN1   CMPX   BGLX_blk
         BEQ    TGEN4
         LDA    LTBYTE
         BPL    TGEN2
@@ -115,31 +116,31 @@ TGEN3   JSR    RFONL1
         LEAX   $20,X
         BRA    TGEN1
 TGEN4   LDD    LTPTR            ;SAVE TERRAIN POINTER
-        STD    TEMP2A
+        STD    TEMP2A_blk
         LDA    LTCNT            ;SAVE COUNTER
-        STA    TEMP1A
+        STA    TEMP1A_blk
         LDA    LTBYTE           ;SAVE TERRAIN DATA BYTE
-        STA    TEMP1B
+        STA    TEMP1B_blk
         LDA    LOFF             ;SAVE TERRAIN OFFSET
-        STA    TEMP1C
+        STA    TEMP1C_blk
         LDX    #TERTF0          ;INITIALIZE TERRAIN TABLE POINTERS
         STX    TTBLP0
         LDX    #TERTF1
         STX    TTBLP1
-TGEN5   LDD    BGLX             ;INITIAL TERRAIN GENERATING LOOP
+TGEN5   LDD    BGLX_blk             ;INITIAL TERRAIN GENERATING LOOP
         SUBD   #$20
-        STD    BGLX
-        CMPD   TEMP2B
+        STD    BGLX_blk
+        CMPD   TEMP2B_blk
         BMI    TGEN6
         JSR    ADDL01
         BRA    TGEN5
-TGEN6   LDD    TEMP2A           ;SET RIGHT TERRAIN POINTER
+TGEN6   LDD    TEMP2A_blk           ;SET RIGHT TERRAIN POINTER
         STD    RTPTR
-        LDA    TEMP1A           ;SET RIGHT TERRAIN COUNTER
+        LDA    TEMP1A_blk           ;SET RIGHT TERRAIN COUNTER
         STA    RTCNT
-        LDA    TEMP1B           ;SET RIGHT TERRAIN BYTE
+        LDA    TEMP1B_blk           ;SET RIGHT TERRAIN BYTE
         STA    RTBYTE
-        LDA    TEMP1C           ;SET RIGHT OFFSET
+        LDA    TEMP1C_blk           ;SET RIGHT OFFSET
         STA    ROFF
         LDY    #STBL            ;ZERO SCREEN ADDRESS TABLE
         LDX    #0
@@ -152,34 +153,34 @@ TGEN10  STX    ,Y++
 *
 * TERRAIN OUTPUT ROUTINE
 *
-BGOUT   LDD    BGL              ;UPDATE TABLES
+BGOUT_routine   LDD    BGL              ;UPDATE TABLES
         ANDB   #$E0
-        SUBD   BGLX
+        SUBD   BGLX_blk
         ASLB 
         ROLA 
         ASLB 
         ROLA 
         ASLB 
         ROLA 
-        STA    TEMP1A
+        STA    TEMP1A_blk
         BEQ    TTER08
         BMI    TTER09
-TTER10  LDD    BGLX
+TTER10  LDD    BGLX_blk
         ADDD   #$20
-        STD    BGLX
+        STD    BGLX_blk
         JSR    ADDR01
-        DEC    TEMP1A
+        DEC    TEMP1A_blk
         BNE    TTER10
         BRA    TTER08
-TTER09  LDD    BGLX
+TTER09  LDD    BGLX_blk
         SUBD   #$20
-        STD    BGLX
+        STD    BGLX_blk
         JSR    ADDL01
-        INC    TEMP1A
+        INC    TEMP1A_blk
         BNE    TTER09
 TTER08  LDD    BGL
         ANDB   #$E0
-        STD    BGLX
+        STD    BGLX_blk
         LDX    #0
         LDY    #STBL
         STS    SSTACK           ;SAVE HARDWARE STACK
@@ -189,11 +190,7 @@ TTER08  LDD    BGL
         LDS    TTBLP1           ;CHANGE TO FLAVOR 1
 TTER02  LDA    #$98
 
-; TTER03  STX [,Y]  ;FAST OUTPUT
-TTER03  ;Was: 'STX [,Y]'  ;FAST OUTPUT TODO! TODO!
-
-		FDB 0x1153
-
+TTER03  STX [,Y]  ;FAST OUTPUT
         PULS   B,U
         STD    ,Y
         STU    [,Y++]
@@ -245,7 +242,7 @@ ADDL01  JSR    LFONR1           ;LEFT FUNCTION ON RIGHT SIDE
         BRA    ADDL08
 ADDL07  INC    ROFF             ;DOWN
 ADDL08  LDA    #$20             ;CHECK FLAVOR
-        BITA   BGLX+1
+        BITA   BGLX_blk+1
         BNE    ADDL02
         LDX    TTBLP1           ;FLAVOR 1
         JSR    LFONL1           ;LEFT FUNCTION ON LEFT SIDE
@@ -317,7 +314,7 @@ ADDR01  LDA    LTBYTE           ;CHECK LEFT SIDE
 ADDR07  INC    LOFF             ;DOWN
 ADDR08  JSR    RFONL1           ;RIGHT FUNCTION ON LEFT SIDE
         LDA    #$20             ;CHECK FLAVOR
-        BITA   BGLX+1
+        BITA   BGLX_blk+1
         BEQ    ADDR02
         LDX    TTBLP1           ;FLAVOR 1
         LEAX   -3,X             ;MOVE TABLE POINTER
@@ -407,7 +404,7 @@ ALTT5   JSR    RFONR1           ;NEXT BIT
 *
 * TERRAIN ERASE
 *
-BGERAS  LDX    #0               ;ZERO
+BGERAS_routine  LDX    #0               ;ZERO
         LDY    #STBL            ;ERASE TABLE START
 ERAS1   STX    [,Y++]            ;ERASE AT TABLE
         CMPY   #STBL+$130       ;DONE?
@@ -628,7 +625,7 @@ PINIT4  LSRA                    ;DIVIDE BY 2
         STX    PCOLP
         LDA    #56              ;INITIALIZE COLOR COUNTER
         STA    PCOLC
-PX1     LDA    #1               ;SLEEEP!!!!!!
+_PX1     LDA    #1               ;SLEEEP!!!!!!
         LDX    #PX1A
         JMP    SLEEPP
 PX1A    LDX    #0               ;ALWAYS ZERO
@@ -665,13 +662,13 @@ PX7     LEAY   10,Y             ;NEXT PIECE
         CMPY   #TABLE+10*PNBITS ;CHECK FOR LAST PIECE
         BNE    PX2              ;NO, LOOP
         DEC    PCOLC            ;NEXT COLOR COUNT
-        BNE    PX1              ;NEXT PIECE
+        BNE    _PX1              ;NEXT PIECE
         LDU    PCOLP            ;NEXT COLOR
         LEAU   1,U
         STU    PCOLP
         LDA    #4               ;RE-INITIALIZE COLOR COUNTER
         STA    PCOLC
-        BRA    PX1              ;CONTINUE
+        BRA    _PX1              ;CONTINUE
 PX8     JMP    [PD2,U]          ;RETURN
 * PLAYER EXPLOSION COLOR TABLE
 PXCOL   FCB    $FF,$7F,$3F,$37,$2F,$27,$1F,$17,7,6,5,4,3,2,0
@@ -679,7 +676,7 @@ PXCOL   FCB    $FF,$7F,$3F,$37,$2F,$27,$1F,$17,7,6,5,4,3,2,0
 *WAVE DATA
 *MAX,MIN,INTRADELT,INTERDELT
 *W1,W2,W3,W4
-WVTAB   FCB    20,0,0,0
+WVTAB_table   FCB    20,0,0,0
         FCB    15,20,20,20      ;LANDERS
         FCB    3,0,0,0
         FCB    0,3,4,5          ;TIES
@@ -725,5 +722,5 @@ WVTAB   FCB    20,0,0,0
         FCB    15,13,12,10      ;UFSTIM
         FCB    200,40,$F4,$F8
         FCB    240,220,200,200  ;UFOSK
-WVTEND  ; EQU    *
+WVTEND_end  ; EQU    *
         ; END  

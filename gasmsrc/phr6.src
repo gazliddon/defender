@@ -169,7 +169,7 @@ TOTPDC  RMB    4                ;TOTAL PAID CREDITS
 TOTRPL  RMB    4                ;TOTAL REPLAYS
 BLLTIM  RMB    4                ;BALL TIME IN MINS
 BLLCNT  RMB    4                ;TOTAL "BALLS" PLAYED
-CMSDEF  ; EQU    *
+CMSDEF  EQU    *
 CRHSTD  RMB    12               ;FOR ALL TIME HSTD
         RMB    12               ;ALL TIME #2
         RMB    12
@@ -178,7 +178,7 @@ CRHSTD  RMB    12               ;FOR ALL TIME HSTD
         RMB    12
         RMB    12
         RMB    12
-CREDST  ;EQU    *                ;CREDITS BACKUP
+CREDST  EQU    *                ;CREDITS BACKUP
 DIPSW   RMB    2                ;DIPSW FUNCTIONS WHEN DIPFLG SET
         ORG    CMOS+$7F         ;PUT IT ACCROSS BOUNDARY
 CMOSCK  RMB    2                ;FOR BOUNDARY BYTE
@@ -217,10 +217,11 @@ BGLX    RMB    2                ;OLD TERRAIN LEFT
 GTIME   RMB    1                ;GAME TIMER
 PDFLG   RMB    1                ;SPACE HOLDER PLAYER DIED
 PCRAM   RMB    16               ;PSEUDO COLOR RAM
-MAPCR   RMB    1
+MAPCR   RMB    1                ;current MAPC copy
 CREDIT  RMB    1
 CUNITS  RMB    1
 BUNITS  RMB    1
+
 TEMP1A  RMB    1
 TEMP1B  RMB    1
 TEMP1C  RMB    1
@@ -242,6 +243,7 @@ WORDPT  RMB    2                ;WORD POINTER(TEXT ROUTINE)
 MESEND  RMB    2                ;MESSAGE END(TEXT ROUTINE)
 SPACEF  RMB    1                ;SPACE FLAG(TEST ROUTINE)
 NUMBER  RMB    2                ;NUMBER(NUMBER ROUTINE)
+
 ROMPTR  RMB    2                ;ROM TABLE POINTER(COMPREHENSIVE ROM TEST)
 TIMER   RMB    1                ;FIRQ TIMER
 OVCNT   RMB    1

@@ -3,7 +3,7 @@
 * SYSTEM EQUATES
 *
 LETCOL  EQU    $C001            ;USE COLOR 1!!!
-THSTAB	EQU	$B260	              ;HOME!!
+;THSTAB	EQU	$B260	              ;HOME!!
 KILSND  EQU    $13              ;SOUND NUMBER TO TURN OFF SOUNDS
 LSOUND  EQU    $1F              ;LAST SOUND TO BE TESTED
 SWSND   EQU    $08              ;SOUND MADE FOR SWCLOSURE
@@ -13,7 +13,8 @@ SWSND   EQU    $08              ;SOUND MADE FOR SWCLOSURE
 * DIAGNOSTIC ROM
 *
 *
-        ORG    DIAORG           ;POINT TO START
+        ORG    $c000           ;POINT TO START
+		PUT    defend_7
 *
 * VECTORED JUMPS INTO ROM HERE
 *
@@ -34,7 +35,8 @@ SWSND   EQU    $08              ;SOUND MADE FOR SWCLOSURE
         JMP    CRAM10
         JMP    CRAM20
         JMP    SOUND0
-        JMP    RHSTDS
+        JMP    RHSTDS_routine
+
 OUTB0   JMP    STBXBV           ;DIRECT
 INB0    JMP    LDBXBV           ;DIRECT
 *
@@ -180,7 +182,7 @@ PWRUP0  LEAS   2,S              ;REMOVE THIS CALL
 *
 CROM0   ORCC   #$10             ;SET COMPREHENSIVE FLAG
         JSR    NEWTST
-        JSR    ROM0V
+        JSR    ROMOV
         PSHS   U                ;SAVE A BIT
         LDU    RMAPV            ;GET IT INDIRECT
         LEAU   24,U             ;GET TO THE END
@@ -739,10 +741,10 @@ CROSS5  STD    ,X++             ;MOVE IN WHITE
         LDA    #$11             ;MOVE WHITE HORIZ
         LDY    #WHORZ
 CROSS2  LDX    0,Y              ;GET START PTR
-        STX    TMPAD
+        STX    TEMP2E
 CROSS3  STA    0,X              ;MOVE IN WHITE
-        INC    TMPAD            ;UPDATE PTR
-        LDX    TMPAD
+        INC    TEMP2E            ;UPDATE PTR
+        LDX    TEMP2E
         CMPX   2,Y              ;CK IF DONE
         BNE    CROSS3           ;NO, KEEP GOING
         LEAY   4,Y              ;INCR Y BY 4
@@ -751,11 +753,11 @@ CROSS3  STA    0,X              ;MOVE IN WHITE
         JSR    WATCHD           ;GET THE DOGGY
         LDY    #HORIZ           ;MOVE IN COLOR HORIZ.
 CROSS6  LDX    0,Y              ;GET START PTR
-        STX    TMPAD
+        STX    TEMP2E
         LDA    4,Y              ;GET COLOR
 CROSS7  STA    0,X              ;MOVE IN COLOR
-        INC    TMPAD
-        LDX    TMPAD
+        INC    TEMP2E
+        LDX    TEMP2E
         CMPX   2,Y              ;CK IF LINE DONE
         BNE    CROSS7           ;NO, KEEP GOING
         LEAY   5,Y              ;INCR Y BY 5
@@ -792,22 +794,22 @@ CROSSB  LDA    0,X
         BNE    CROSSB
         JSR    WATCHD           ;GET THE DOGGY
         LDX    #$0E18
-        STX    TMPAD            ;MOVE IN DOTS
-CROSSC  LDX    TMPAD
+        STX    TEMP2E            ;MOVE IN DOTS
+CROSSC  LDX    TEMP2E
         LDA    0,X              ;OR IN DOT
         ANDA   #$F0
         ORA    #$01
         STA    0,X              ;STORE DOT
-        LDB    TMPAD+1          ;UPDATE VERTICAL PTR
+        LDB    TEMP2E+1          ;UPDATE VERTICAL PTR
         ADDB   #$22
         BCS    CROSSD
-        STB    TMPAD+1
+        STB    TEMP2E+1
         BRA    CROSSC
 CROSSD  LDB    #$18
-        STB    TMPAD+1          ;RE-INIT VERT. PTR
-        LDB    TMPAD
+        STB    TEMP2E+1          ;RE-INIT VERT. PTR
+        LDB    TEMP2E
         ADDB   #$10             ;UPDATE HORIZ PTR
-        STB    TMPAD
+        STB    TEMP2E
         CMPB   #$9E             ;CK IF DONE
         BNE    CROSSC           ;NO, KEEP GOING
         JMP    WATCHD           ;GET DOGGY + RTS THERE
