@@ -1,0 +1,8 @@
+
+defend_9	equ 0x10000	 ; Amode
+defend_12	equ 0x10800	
+defend_8	equ 0x11000	
+defend_11	equ 0x11800	
+defend_7	equ 0x12000	
+defend_10	equ 0x12800	
+defend_6	equ 0x16000	
