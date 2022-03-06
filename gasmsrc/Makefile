@@ -1,6 +1,7 @@
-# Locations
-.PHONY: all clean
+# Phonies
+.PHONY: all clean dirs cmp roms
 
+# Locations
 DEFENDER_DIR     := ..
 DEFENDER_BIN_DIR := $(DEFENDER_DIR)/bin
 RED_LABEL        := $(DEFENDER_DIR)/redlabel
