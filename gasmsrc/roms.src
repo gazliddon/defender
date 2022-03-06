@@ -1,0 +1,42 @@
+	org $c000
+	put defend_6
+	incbinref "$(RED_LABEL)/defend.6"
+
+	org $c000
+	put defend_7
+	incbinref "$(RED_LABEL)/defend.7"
+
+	org $c000
+	put defend_8
+	incbinref "$(RED_LABEL)/defend.8"
+
+	org $c000
+	put defend_10
+	incbinref "$(RED_LABEL)/defend.10"
+
+	org $c000
+	put defend_11
+	incbinref "$(RED_LABEL)/defend.11"
+
+	include "phr6.src" 
+
+	include "mess0.src" 
+	include "romc0.src" 
+	include "romc8.src" 
+	include "blk71.src"
+
+	;; Urgh, defend_6 is defend_6 uo until $778
+	;; the rest is defend_7 EXCEPT $17 is a $7f0
+
+	org $c000
+    put defend_6
+	grabmem defend_6,$778
+	grabmem defend_7 + $778,$78
+	fcb $17
+	grabmem defend_7 + $7f1, $f
+
+	writebin "$(OUT_DIR)/defend.8" , defend_8 , 0x800
+	writebin "$(OUT_DIR)/defend.7" , defend_7 , 0x800
+	writebin "$(OUT_DIR)/defend.10", defend_10, 0x800
+	writebin "$(OUT_DIR)/defend.6" , defend_6, 0x800
+

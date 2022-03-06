@@ -1,0 +1,52 @@
+	org defend_1
+	incbinref "$(RED_LABEL)/defend.1"
+
+	org defend_2
+	incbinref "$(RED_LABEL)/defend.2"
+
+	org defend_3
+	incbinref "$(RED_LABEL)/defend.3"
+
+	org defend_4
+	incbinref "$(RED_LABEL)/defend.4"
+
+	org $c000
+	put defend_9
+	incbinref "$(RED_LABEL)/defend.9"
+
+	org $c800
+	put defend_12
+	incbinref "$(RED_LABEL)/defend.12"
+
+	org $c800
+	put defend_11
+	incbinref "$(RED_LABEL)/defend.11"
+
+	include "phr6.src" 
+
+	include "samexap7.src"
+
+	include "defa7.src"
+	include "defb6.src"
+	include "amode1.src"
+
+	;; Patch needed for defend_12
+	org 0
+	put defend_12 + $700
+	FCB    $C3              ;CHECKBYTE
+
+
+	org $c800
+	put defend_11
+	rmb $450
+	incbin "unknown.bin",0,$40
+	rmb $122
+	incbin "unknown.bin", $122 + $40, $24e
+
+	 writebin "$(OUT_DIR)/defend.1"  ,defend_1 ,$800
+	 writebin "$(OUT_DIR)/defend.2"  ,defend_2 ,$1000 
+	 writebin "$(OUT_DIR)/defend.3"  ,defend_3 ,$1000 
+	 writebin "$(OUT_DIR)/defend.4"  ,defend_4 ,$800 
+	 writebin "$(OUT_DIR)/defend.9"  ,defend_9 ,$800 
+	 writebin "$(OUT_DIR)/defend.11" ,defend_11,$800 
+	 writebin "$(OUT_DIR)/defend.12" ,defend_12,$800 

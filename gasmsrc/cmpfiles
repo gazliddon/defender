@@ -1,0 +1,10 @@
+OUT="$(cmp $1/$3 $2/$3 2>&1)"
+
+if [ $? -ne 0 ];
+    then
+        echo $3 "\t❌\t$OUT";
+    else
+        echo $3 "\t✅";
+	fi
+exit 0
+

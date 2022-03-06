@@ -171,16 +171,16 @@ BLLTIM  RMB    4                ;BALL TIME IN MINS
 BLLCNT  RMB    4                ;TOTAL "BALLS" PLAYED
 CMSDEF  EQU    *
 CRHSTD  RMB    12               ;FOR ALL TIME HSTD
-        RMB    12               ;ALL TIME #2
-        RMB    12
-        RMB    12
-        RMB    12
-        RMB    12
-        RMB    12
-        RMB    12
+CRHST1  RMB    12               ;ALL TIME #2
+CRHST2  RMB    12
+CRHST3  RMB    12
+CRHST4  RMB    12
+CRHST5  RMB    12
+CRHST6  RMB    12
+CRHST7  RMB    12
 CREDST  EQU    *                ;CREDITS BACKUP
 DIPSW   RMB    2                ;DIPSW FUNCTIONS WHEN DIPFLG SET
-        ORG    CMOS+$7F         ;PUT IT ACCROSS BOUNDARY
+        ORG    CMOS+$7F
 CMOSCK  RMB    2                ;FOR BOUNDARY BYTE
 REPLAY  RMB    4                ;REPLAY LEVEL
 NSHIP   RMB    2                ;# OF SHIPS/GAME
@@ -190,18 +190,18 @@ SLOT2M  RMB    2                ;CENTER COIN MULT
 SLOT3M  RMB    2                ;RIGHT COIN MULT
 CUNITC  RMB    2                ;COIN UNITS PER CREDIT
 CUNITB  RMB    2                ;COIN UNITS FOR BONUS
-MINUNT  RMB    2                ;MINIMUM  REQD
+MINUNT  RMB    2                ;MINIMUM REQD
 FREEPL  RMB    2                ;FREE PLAY MODE
-GA1     RMB    2                ;GAME ADJUSTS - 1 DIFFICULTY
-        RMB    2                ;2 DIFFICULTY CEILING
-        RMB    2                ;3 BGSND
-        RMB    2                ;4 RESTORE WAVE #
-        RMB    2                ;5
-        RMB    2                ;6
-        RMB    2                ;7
-        RMB    2                ;8
-        RMB    2                ;9
-        RMB    2                ;10
+GA1     RMB    2                ;GAME ADJUSTS - 1
+GA2     RMB    2
+GA3     RMB    2
+GA4     RMB    2
+GA5     RMB    2
+GA6     RMB    2
+GA7     RMB    2
+GA8     RMB    2
+GA9     RMB    2
+GA10    RMB    2
 *
 *EXPLOSION RAM ALLOCATION
 *

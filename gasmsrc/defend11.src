@@ -1,18 +1,15 @@
-
-	base equ $c800
-	org base
+	org $c000
 	put defend_11
 
-	incbin "../../glht/gasm/bin/roms.o",defend_11, 0x450
+	incbin "bin/roms.o",defend_11, 0x450
 	;; 0x450 = 1104
 
 	;; Not sure, 64 bytes of mystery
 	incbin "unknown.bin",0,$40
 	;; 0x490 = 1168
 
-
 	;; Tail end of amode, defend_9
-	incbin "../../glht/gasm/bin/defa7-defb6-amode1.o",0xcc90, $122
+	incbin "bin/defa7-defb6-amode1.o",0xcc90, $122
 
 	;; $5b2 - 1458
 	incbin "unknown.bin", $122 + $40, $24e

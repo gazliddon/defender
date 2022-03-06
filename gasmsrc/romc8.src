@@ -839,6 +839,6 @@ ENDPGM  ;EQU    *
         ;END  
 
 		org $cff0     ; Gaz: This was patched into defend.10. Removed patch and added FCB
-		PUT defend_7 + $ff0
+		PUT defend_10 + $7f0
 		fcb $4A
 

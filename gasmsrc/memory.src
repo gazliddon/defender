@@ -1,3 +1,9 @@
+defend_1 equ $d000
+defend_4 equ $d800
+defend_2 equ $e000
+defend_3 equ $f000
+
+
 
 defend_9	equ 0x10000	 ; Amode
 defend_12	equ 0x10800	

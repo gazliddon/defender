@@ -637,3 +637,11 @@ THSTAB  RMB    12*8             ;TODAYS
 ;         JSR    CWRIT
 ;         ENDM 
 ;         PAGE 
+
+
+*SAM EQUATES
+BLKLEN  EQU    14
+INITS   EQU    $A000
+PNUMB   EQU    INITS+6
+INITDS  EQU    PNUMB+2
+SCOREN  EQU    INITDS+4

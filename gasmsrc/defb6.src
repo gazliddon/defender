@@ -1267,7 +1267,7 @@ DIE  ()
 *SLEEP IN ROMOTE BLOCK
 *PD+6,7=WAKEUP ADDR
 *PD+5=BLOCK
-SLEEPP  LDU    CRPROC
+SLEEPP LDU    CRPROC
         STX    PD+6,U
         LDB    MAPCR            ;GET CURRENT BLOCK
         STB    PD+5,U           ;SAVE IT FOR THE ELL OF IT
@@ -1282,7 +1282,7 @@ SLEEPS  LDA    PD+5,U           ;GET THE BLOCK
 *RET+2= BLOCK
 *CALLING ROUTINE BLOCK IS SAVED
 *
-LJSR    LEAS   -3,S             ;MAKE ROOM
+LJSR LEAS   -3,S             ;MAKE ROOM
         PSHS   A,U              ;SAVE TEMPS
         LDA    MAPCR            ;GET BLOCK
         STA    5,S              ;PUT WITH RETURN ADDR
@@ -1331,7 +1331,7 @@ MESS    PSHS   X,Y,D,U,DP,CC
 *
 *AUDIT ROUTINE
 *INC METER B
-AUDIT   BSR    MAPCH3
+AUDIT BSR    MAPCH3
         JMP    VAUD1
         FCB    $39              ;CKBYT CSUM F000-F7FF(ACTUAL)
 *
@@ -1341,7 +1341,7 @@ AUDIT   BSR    MAPCH3
 *ALL SAVED
 *REENTRANT
 *
-CWRIT   PSHS   A,B,X,Y,U
+CWRIT PSHS   A,B,X,Y,U
         TFR    D,X
         LDA    MAPCR            ;MAP SWAPPING
         PSHS   A
@@ -1352,35 +1352,35 @@ CWRIT   PSHS   A,B,X,Y,U
         LDY    OBJP0,Y          ;GET DATA
         PSHS   D                ;SAVE WIDTH,HEIGHT
         BITB   #1               ;ODD LENGTH?
-        BNE    CWRT1
+        BNE    @CWRT1
 *EVEN BYTE COUNT
-CWRT00  SUBB   #2
-CWRT0   LDU    B,Y
+@CWRT00  SUBB   #2
+@CWRT0   LDU    B,Y
         STU    B,X
         SUBB   #2
-        BPL    CWRT0
+        BPL    @CWRT0
         LDB    1,S
         LEAX   $100,X
         LEAY   B,Y
         DECA 
-        BNE    CWRT00
-        BRA    CWRTX
+        BNE    @CWRT00
+        BRA    @CWRTX
 *ODD BYTE COUNT
-CWRT1   DECB 
+@CWRT1   DECB 
         LDA    B,Y
         STA    B,X
         SUBB   #2
-        BMI    CWRT3
-CWRT2   LDU    B,Y
+        BMI    @CWRT3
+@CWRT2   LDU    B,Y
         STU    B,X
         SUBB   #2
-        BPL    CWRT2
-CWRT3   LDB    1,S              ;GET HEIGHT
+        BPL    @CWRT2
+@CWRT3   LDB    1,S              ;GET HEIGHT
         LEAX   $100,X
         LEAY   B,Y
         DEC    ,S               ;DEC WIDTH
-        BNE    CWRT1
-CWRTX   LEAS   2,S              ;GET MAP +2 PHONIES
+        BNE    @CWRT1
+@CWRTX   LEAS   2,S              ;GET MAP +2 PHONIES
         PULS   A
         STA    MAPCR
         STA    MAPC
@@ -2084,7 +2084,9 @@ TIED41  FDB    $0000,$0D0D,$0D0D,$0D00 ;1
 *BLK 3 GRAPHICS
 ***************
 
+;; !!!! defend_11
         ORG    $CC90
+		put defend_11 + $490
 
 *BOMB EXPLOSION PICT
 BXD10   FDB    $000C,$CCCC,$CCCC,$0C00
@@ -2189,8 +2191,9 @@ PLD20   FDB    $0000,$0000,$3900 ;1
         FDB    $6066,$6683
 		fcb $86
 
-		org $cee9
-		put $10ee9
+		org_offset equ $6e9
+		org $c800 + org_offset
+		put defend_12 + org_offset
 		fcb $80
 
         FDB    $0000,$3000,$3000 ;8
@@ -2275,6 +2278,7 @@ TERX0   FDB    $1C0D,$7FE7,$7000 ;1
         JMP    SNDLD
         FDB    APSND
         FCB    $2A              ;CKBYT  CSUM F800-FFFF(ACTUAL)
+
         ORG    $FFF0
         FDB    RESET,RESET,RESET
         FDB    RESET,IRQHK

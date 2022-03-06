@@ -572,6 +572,7 @@ PLEX    PULS   D
         STD    PSED             ;INITIALIZE SEED
         LDD    #$1732
         STD    PSED2            ;INITIALIZE SEED2
+
 * INITIALIZE PIECES
         LDY    #TABLE
 PINIT1  LDA    PCENT            ;X POSITION
@@ -676,7 +677,8 @@ PXCOL   FCB    $FF,$7F,$3F,$37,$2F,$27,$1F,$17,7,6,5,4,3,2,0
 *WAVE DATA
 *MAX,MIN,INTRADELT,INTERDELT
 *W1,W2,W3,W4
-WVTAB_table   FCB    20,0,0,0
+WVTAB_table
+        FCB    20,0,0,0
         FCB    15,20,20,20      ;LANDERS
         FCB    3,0,0,0
         FCB    0,3,4,5          ;TIES
@@ -722,5 +724,5 @@ WVTAB_table   FCB    20,0,0,0
         FCB    15,13,12,10      ;UFSTIM
         FCB    200,40,$F4,$F8
         FCB    240,220,200,200  ;UFOSK
-WVTEND_end  ; EQU    *
+WVTEND_end  EQU    *
         ; END  

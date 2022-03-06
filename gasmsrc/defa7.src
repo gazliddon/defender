@@ -618,20 +618,20 @@ ADVSW   LDA    STATUS
         JSR    MAPCH3
         LDA    PIA01            ;AUTO OR MAN?
         LSRA 
-        BCS    ADVSW1
+        BCS    @ADVSW1
         JMP    VCROM0           ;MAN-DIAGNOSTICS
-ADVSW1  JMP    VUDITG           ;AUTO-AUDITS
+@ADVSW1  JMP    VUDITG           ;AUTO-AUDITS
 SLAMX   JMP    SUCIDE
 *
 *COIN SWITCHES
 *LEFT
 LCOIN   LDX    #LCCNT
         LDB    #((LCOINV<<8)&$FF00)>>8
-        BRA    COIN
+        BRA    COIN_local
 *RIGHT
 RCOIN   LDX    #RCCNT
         LDB    #((RCOINV<<8)&$FF00)>>8
-        BRA    COIN
+        BRA    COIN_local
 *CENTER
 CCOIN   LDX    #CCCNT
         LDB    #(( CCOINV<<8 )&$FF00)>>8
@@ -639,7 +639,7 @@ CCOIN   LDX    #CCCNT
 *COIN ROUTINE
 *X=DEBOUNCE COUNTER
 *B=ROUTINE
-COIN    LDA    SLMCNT
+COIN_local    LDA    SLMCNT
         BNE    SLAMX
         LDA    ,X
         BNE    SLAMX
@@ -789,10 +789,10 @@ SSC0    LDA    PIA21
         ANDA   PIA21
         BEQ    CSCAN
         LDU    #SWTAB-4
-SWITCH  CLRB 
-SW0     ADDB   #4
+SWITCH_local  CLRB 
+@SW0     ADDB   #4
         LSRA 
-        BCC    SW0
+        BCC    @SW0
         LEAU   B,U
         PULU   D,X
         LDU    SWPROC
@@ -825,7 +825,7 @@ CSC1    LEAX   -1,X             ;1 MSEC DELAY
         ANDA   PIA01
         BEQ    CSCX             ;NOBODY THERE
         LDU    #SWTAB1-4        ;HANDLE IT
-        BSR    SWITCH
+        BSR    SWITCH_local
 CSCX    RTS  
 *
 *DISPLAY LASERS
@@ -1104,7 +1104,7 @@ ST1     LDA    STATUS
         BEQ    ST1X
         LDD    #ST1SND
 ST09    JSR    SNDLD
-        BSR    START
+        BSR    START_local
 ST1X    
 		DIE  ()
 *
@@ -1116,13 +1116,13 @@ ST2     LDA    STATUS
         LDA    CREDIT
         CMPA   #2               ;NO CREDY NO GAMEY POOH
         BLO    ST1X
-        BSR    START
+        BSR    START_local
         LDD    #ST2SND
         BRA    ST09
 *
 *START GAME
 *
-START   CLR    CUNITS           ;PATCH ONE
+START_local   CLR    CUNITS           ;PATCH ONE
         NOP  
         LDA    PWRFLG           ;WILLI PAGE CHECK
         BEQ    STARTX
@@ -2341,7 +2341,7 @@ POFF1   LDD    PLAXC
 *PLAYER PROCESS
 *CALLED FORM IRQ
 *
-PLAYER  LDA    STATUS           ;ATTRACT?
+PLAYER LDA    STATUS           ;ATTRACT?
         BITA   #$40
         LBNE   PLAYX            ;YES
 *X DAMPING
