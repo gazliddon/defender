@@ -10,7 +10,7 @@ TMP_DIR := bin
 SRC_DIR := .
 OUT_DIR := redlabel
 DEPS_DIR := deps
-GASM_DIR := ../../glht/target/debug/
+GASM_DIR := ../../glht/target/debug
 
 # Tools
 CMP := ./cmpfiles $(RED_LABEL) $(OUT_DIR)
@@ -21,7 +21,7 @@ ASM := $(GASM_DIR)/gasm --star-comments --max-errors 50 --mem-size 94208 \
 
 # Inputs
 COMMON_SRC := macros.68 memory.src
-SRCS       := roms.src defa.src
+SRCS       := roms.src
 
 # Outputs
 ROMS :=     defend.1 \
@@ -43,9 +43,7 @@ DEPS := $(SRCS:%.src=$(DEPS_DIR)/%.d)
 # Assemble src file and create deps file
 $(TMP_DIR)/%.sym : $(SRC_DIR)/%.src
 	@echo Assembling $< to $@
-	@$(ASM) \
-	$(COMMON_SRC:%.c=$(SRC_DIR)/%.c) \
-	$< -s $@ --deps $(DEPS_DIR)/$*.d
+	@$(ASM) $(COMMON_SRC:%.c=$(SRC_DIR)/%.c)  $< -s $@ --deps $(DEPS_DIR)/$*.d
 
 # Rules
 all: dirs roms cmp
