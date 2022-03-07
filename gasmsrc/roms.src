@@ -6,21 +6,25 @@
     ;; Two blocks of compilation in their own label
     ;; scope to avoid clashes
     scope roms
-
         include "mess0.src" 
         include "romc0.src" 
         include "romc8.src" 
         include "blk71.src"
 
     scope defa
-
         include "samexap7.src"
         include "defa7.src"
         include "defb6.src"
         include "amode1.src"
 
+	;; Patching!
+	;; Some parts of this game were assembled to the same area of memory
+	;; and then saved. We need to replicate the garbage
+	;; to produce ROMS that are identical to the red label
+	;; version of defender
+
 	;; Urgh, defend_6 is defend_6 uo until $778
-	;; the rest is defend_7 EXCEPT $17 is a $7f0
+	;; the rest is defend_7 EXCEPT $17 which is a $7f0
 	org $c000
     put defend_6
 	grabmem defend_6,$778
@@ -29,7 +33,7 @@
 	grabmem defend_7 + $7f1, $f
 
 	;; Patch needed for defend_12
-	org 0
+	org $c000
 	put defend_12 + $700
 	FCB    $C3              ;CHECKBYTE
 
@@ -55,4 +59,6 @@
     write_rom(10,$800)
     write_rom(11,$800)
     write_rom(12,$800)
+
+	;; The end!
 
