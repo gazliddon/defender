@@ -24,24 +24,24 @@ defender:
 	#
 	# Build amode1 # The equivalent of: RASM PHR2,DEFA2,DEFB2,AMODE0;-X (ELSE CREF SYMBOL OVERFLOW)
 	./asm6809/src/asm6809 -B src/phr6.src src/defa7.src src/defb6.src src/amode1.src\
-	 		-l bin/defa7-defb6-amode1.lst  -o bin/defa7-defb6-amode1.o
+	 		-s bin/defa7-defb6-amode1.sym -l bin/defa7-defb6-amode1.lst  -o bin/defa7-defb6-amode1.o
 	#
 	# Build samexamp
 	# The equivalent of: RASM PHR2,SAMEXPA7
 	./asm6809/src/asm6809 -B src/phr6.src src/samexap7.src\
-	    -l bin/samexap7.lst -o bin/samexap7.o
+	    -s bin/samexap7.sym -l bin/samexap7.lst -o bin/samexap7.o
 	#
 	# Build defa7 and defb6
 	# The equivalent of: RASM PHR2,DEFA2,DEFB2
 	./asm6809/src/asm6809 -B src/phr6.src src/defa7.src src/defb6.src\
- 			-l bin/defa7-defb6.lst -o bin/defa7-defb6.o
+ 			-s bin/defa7-defb6.sym -l bin/defa7-defb6.lst -o bin/defa7-defb6.o
 	#
 	# Build blk71
-	./asm6809/src/asm6809 -B --6309 src/blk71.src -l bin/blk71.lst -o bin/blk71.o
+	./asm6809/src/asm6809 -B --6309 -s bin/blk71.sym src/blk71.src -l bin/blk71.lst -o bin/blk71.o
 	#
 	# Build roms
 	./asm6809/src/asm6809 -B src/mess0.src src/romf8.src src/romc0.src src/romc8.src\
-	 		-l bin/roms.lst -o bin/roms.o
+	 		-s bin/roms.sym -l bin/roms.lst -o bin/roms.o
 	#
 	# Build sound
 	./vasm-mirror/vasm6800_oldstyle -Fbin -ast -unsshift src/vsndrm1.src\
