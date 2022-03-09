@@ -1,4 +1,4 @@
-# Defender (1981) by Eugene Jarvis and Sam Dicker
+# Defender (1981) by Eugene Jarvis, Larry DeMar and Sam Dicker
 
 ## Build Instructions
 
