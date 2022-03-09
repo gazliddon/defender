@@ -1,3 +1,21 @@
+
+    macro write_rom(id,size) {
+		writebin "$(OUT_DIR)/defend.|id|"  ,defend_|id| ,|size|
+    }
+
+	;; Set a byte in physical memeory 
+	macro poke(a,b) {
+		org 0
+		put |a|
+		fcb |b|
+	}
+
+	macro section(a) {
+		org 0
+		put |a|
+	}
+
+
 struct player_data {
 	PSCOR    : dword,
 	PRPLA    : byte[3],
