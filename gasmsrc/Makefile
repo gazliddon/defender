@@ -10,7 +10,7 @@ TMP_DIR := bin
 SRC_DIR := .
 OUT_DIR := redlabel
 DEPS_DIR := deps
-GASM_DIR := ../../glht/target/release
+GASM_DIR := ../../gazm/target/release
 
 # Tools
 CMP := ./cmpfiles $(RED_LABEL) $(OUT_DIR)
